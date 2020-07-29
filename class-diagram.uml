@@ -14,7 +14,8 @@ isA Cell;
 
 class RoomCell {
   Boolean isDoor;
-  isA Cell;
+  RoomName room;
+isA Cell;
   }
 
 class Item {
@@ -23,7 +24,8 @@ class Item {
 
 class Player {
 	isA Item;
-    1 -- * Card nonMuderingThings;
+    1 hand -- * Card;
+  1 notebook-- * Card re;
 }
 
 
@@ -37,15 +39,25 @@ class Weapon {
 class Card
 {
 
+  CardType type;
+  name;
+
 }
 
 class Game
 {
       1 -- 1 Board;
-    1 -- * cA
+    1 -- * Card;
+    
+     * -- * Player;
+private Card[] envelope = new Card[3];
+
   }
 
-//$?[End_of_model]$?
+
+enum RoomName {KITCHEN, BALLROOM, CONSERVATORY }
+
+
 
 namespace -;
 
@@ -60,31 +72,31 @@ class Board
 
 class Cell
 {
-  position 219 269 109 41;
+  position 237 265 109 41;
   position.association Cell__Item 110,19 0,30;
 }
 
 class HallCell
 {
-  position 42 422 109 58;
+  position 42 422 167 58;
 }
 
 class RoomCell
 {
-  position 217 419 109 58;
+  position 220 419 142 75;
   }
 
 class Item
 {
   position 638 280 109 41;
-  position.association Cell__Item 0,19 110,30;
+  position.association Cell__Item 0,18 110,31;
   position.association Item__RoomCell 0,32 118,9;
 }
 
 class Player
 {
-  position 742 425 109 41;
-  position.association Card:nonMuderingThings__Player 82,0 30,41;
+  position 754 425 109 41;
+  position.association Card:nonMuderingThings__Player 82,0 24,75;
 }
 
 class Weapon
@@ -99,12 +111,15 @@ class EmptyCell
 
 class Card
 {
-  position 836 193 109 41;
+  position 841 192 113 75;
   position.association Card__Player 38,41 91,0;
+  position.association Card__Game 0,43 110,39;
 }
 
 class Game
 {
-  position 453 43 109 41;
+  position 627 21 109 41;
     position.association Board__Game 47,41 61,0;
-}
+  position.association Card__Game 0,41 0,6;
+    position.association Game__Player 63,41 69,0;
+}//$?[End_of_model]$?
