@@ -22,7 +22,7 @@ public class HallCell extends Cell
 
   public HallCell(Board aBoard, boolean aIsEntrance)
   {
-    super(aBoard);
+//    super(aBoard);    <- I don't think this is necessary - Elias
     isEntrance = aIsEntrance;
   }
 
@@ -48,10 +48,12 @@ public class HallCell extends Cell
     return isEntrance;
   }
 
-  public void delete()
-  {
-    super.delete();
-  }
+  //Prevented compilation - Elias
+
+//  public void delete()
+//  {
+//    super.delete();
+//  }
 
 
   public String toString()

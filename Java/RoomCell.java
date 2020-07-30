@@ -29,7 +29,7 @@ public class RoomCell extends Cell
 
   public RoomCell(Board aBoard, boolean aIsDoor, RoomName aRoom)
   {
-    super(aBoard);
+//    super(aBoard);    <- I don't think this is necessary - Elias
     isDoor = aIsDoor;
     room = aRoom;
   }
@@ -69,10 +69,12 @@ public class RoomCell extends Cell
     return isDoor;
   }
 
-  public void delete()
-  {
-    super.delete();
-  }
+  //Prevented compilation - Elias
+
+//  public void delete()
+//  {
+//    super.delete();
+//  }
 
 
   public String toString()

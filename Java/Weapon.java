@@ -19,16 +19,18 @@ public class Weapon extends Item
 
   public Weapon(Cell aCell, Board aBoard)
   {
-    super(aCell, aBoard);
+//    super(aCell, aBoard);   <- I don't think this is necessary - Elias
   }
 
   //------------------------
   // INTERFACE
   //------------------------
 
-  public void delete()
-  {
-    super.delete();
-  }
+  //Prevented compilation - Elias
+
+//  public void delete()
+//  {
+//    super.delete();
+//  }
 
 }

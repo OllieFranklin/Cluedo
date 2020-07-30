@@ -19,16 +19,18 @@ public class EmptyCell extends Cell
 
   public EmptyCell(Board aBoard)
   {
-    super(aBoard);
+//    super(aBoard);    <- I don't think this is necessary. - Elias
   }
 
   //------------------------
   // INTERFACE
   //------------------------
 
-  public void delete()
-  {
-    super.delete();
-  }
+  //Prevented compilation, don't know if its necessary - Elias
+
+//  public void delete()
+//  {
+//    super.delete();
+//  }
 
 }

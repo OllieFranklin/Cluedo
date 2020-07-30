@@ -24,13 +24,9 @@
       <change beforePath="$PROJECT_DIR$/Java/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/Java/Board.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Java/Card.java" beforeDir="false" afterPath="$PROJECT_DIR$/Java/Card.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Java/Cell.java" beforeDir="false" afterPath="$PROJECT_DIR$/Java/Cell.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Java/EmptyCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/Java/EmptyCell.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Java/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/Java/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Java/HallCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/Java/HallCell.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Java/Item.java" beforeDir="false" afterPath="$PROJECT_DIR$/Java/Item.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Java/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/Java/Player.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Java/RoomCell.java" beforeDir="false" afterPath="$PROJECT_DIR$/Java/RoomCell.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Java/Weapon.java" beforeDir="false" afterPath="$PROJECT_DIR$/Java/Weapon.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +69,7 @@
       <option name="presentableId" value="Default" />
       <updated>1596077197673</updated>
       <workItem from="1596077199423" duration="2813000" />
-      <workItem from="1596089938956" duration="3524000" />
+      <workItem from="1596089938956" duration="2882000" />
     </task>
     <servers />
   </component>
@@ -101,22 +97,6 @@
       <screen x="0" y="-1080" width="1920" height="1080" />
     </state>
     <state x="689" y="-751" key="#com.intellij.ide.util.TreeClassChooserDialog/-1080.-1488.1080.1880/0.0.1920.1040/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1596093717418" />
-    <state width="1877" height="295" key="GridCell.Tab.0.bottom" timestamp="1596094883798">
-      <screen x="0" y="-1080" width="1920" height="1080" />
-    </state>
-    <state width="1877" height="295" key="GridCell.Tab.0.bottom/-1080.-1488.1080.1880/0.0.1920.1040/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1596094883798" />
-    <state width="1877" height="295" key="GridCell.Tab.0.center" timestamp="1596094883798">
-      <screen x="0" y="-1080" width="1920" height="1080" />
-    </state>
-    <state width="1877" height="295" key="GridCell.Tab.0.center/-1080.-1488.1080.1880/0.0.1920.1040/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1596094883798" />
-    <state width="1877" height="295" key="GridCell.Tab.0.left" timestamp="1596094883798">
-      <screen x="0" y="-1080" width="1920" height="1080" />
-    </state>
-    <state width="1877" height="295" key="GridCell.Tab.0.left/-1080.-1488.1080.1880/0.0.1920.1040/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1596094883798" />
-    <state width="1877" height="295" key="GridCell.Tab.0.right" timestamp="1596094883798">
-      <screen x="0" y="-1080" width="1920" height="1080" />
-    </state>
-    <state width="1877" height="295" key="GridCell.Tab.0.right/-1080.-1488.1080.1880/0.0.1920.1040/0.-1080.1920.1080@0.-1080.1920.1080" timestamp="1596094883798" />
     <state x="461" y="-896" key="SettingsEditor" timestamp="1596077609710">
       <screen x="0" y="-1080" width="1920" height="1080" />
     </state>

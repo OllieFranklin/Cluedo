@@ -20,14 +20,16 @@ public class Cell
   // CONSTRUCTOR
   //------------------------
 
-  public Cell(Board aBoard)
-  {
-    boolean didAddBoard = setBoard(aBoard);
-    if (!didAddBoard)
-    {
-      throw new RuntimeException("Unable to create cell due to board. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-  }
+  //Below code also doesn't seem necessary, and prevented compiling. - Elias
+
+//  public Cell(Board aBoard)
+//  {
+//    boolean didAddBoard = setBoard(aBoard);
+//    if (!didAddBoard)
+//    {
+//      throw new RuntimeException("Unable to create cell due to board. See http://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+//    }
+//  }
 
   //------------------------
   // INTERFACE
@@ -38,33 +40,36 @@ public class Cell
     return board;
   }
   /* Code from template association_SetOneToMany */
-  public boolean setBoard(Board aBoard)
-  {
-    boolean wasSet = false;
-    if (aBoard == null)
-    {
-      return wasSet;
-    }
 
-    Board existingBoard = board;
-    board = aBoard;
-    if (existingBoard != null && !existingBoard.equals(aBoard))
-    {
-      existingBoard.removeCell(this);
-    }
-    board.addCell(this);
-    wasSet = true;
-    return wasSet;
-  }
+  //Below code prevented compilation, not all of it seems necessary too - Elias
 
-  public void delete()
-  {
-    Board placeholderBoard = board;
-    this.board = null;
-    if(placeholderBoard != null)
-    {
-      placeholderBoard.removeCell(this);
-    }
-  }
+//  public boolean setBoard(Board aBoard)
+//  {
+//    boolean wasSet = false;
+//    if (aBoard == null)
+//    {
+//      return wasSet;
+//    }
+//
+//    Board existingBoard = board;
+//    board = aBoard;
+//    if (existingBoard != null && !existingBoard.equals(aBoard))
+//    {
+//      existingBoard.removeCell(this);
+//    }
+//    board.addCell(this);
+//    wasSet = true;
+//    return wasSet;
+//  }
+//
+//  public void delete()
+//  {
+//    Board placeholderBoard = board;
+//    this.board = null;
+//    if(placeholderBoard != null)
+//    {
+//      placeholderBoard.removeCell(this);
+//    }
+//  }
 
 }
