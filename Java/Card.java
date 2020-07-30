@@ -13,6 +13,8 @@ public class Card
   // MEMBER VARIABLES
   //------------------------
 
+  static enum CardType { PLAYER, WEAPON, ROOM }
+
   //Card Attributes
   private CardType type;
   private String name;

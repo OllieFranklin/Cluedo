@@ -3,6 +3,8 @@ package Java;
 /*This code was generated using the UMPLE 1.30.0.5074.a43557235 modeling language!*/
 
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 // line 2 "model.ump"
@@ -39,6 +41,31 @@ public class Board
     cells = new ArrayList<Cell>();
     items = new ArrayList<Item>();
     game = new Game(this);
+  }
+
+  public Board(File dataFile) {
+    try {
+      Scanner sc = new Scanner(dataFile);
+      Cell[][] cells = new Cell[25][24];
+      int row = 0;
+      int col = 0;
+      while (sc.hasNext()) {
+        String line = sc.nextLine();
+        for (int i = 0; i < 48; i += 2) {
+          char c1 = line.charAt(i);
+          char c2 = line.charAt(i + 1);
+          if (c1 == 'R' || c1 == 'D') {
+            RoomCell.RoomName roomType = RoomCell.RoomName.values()[Character.getNumericValue(c2)];
+            cells[col][row] = new RoomCell(this, c1 == 'D', roomType);
+          }
+          row++;
+        }
+        col++;
+      }
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
+
   }
 
   //------------------------

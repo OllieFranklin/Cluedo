@@ -13,7 +13,7 @@ public class RoomCell extends Cell
   // ENUMERATIONS
   //------------------------
 
-  public enum RoomName { KITCHEN, BALLROOM, CONSERVATORY }
+  public enum RoomName { KITCHEN, BALLROOM, CONSERVATORY, DINING_ROOM, BILLIARD_ROOM, LIBRARY, LOUNGE, HALL, STUDY }
 
   //------------------------
   // MEMBER VARIABLES

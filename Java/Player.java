@@ -130,7 +130,7 @@ public class Player extends Item
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Card addCard(CardType aType, String aName, Player aNotebook, Game aGame)
+  public Card addCard(Card.CardType aType, String aName, Player aNotebook, Game aGame)
   {
     return new Card(aType, aName, this, aNotebook, aGame);
   }
@@ -202,7 +202,7 @@ public class Player extends Item
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Card addRe(CardType aType, String aName, Player aHand, Game aGame)
+  public Card addRe(Card.CardType aType, String aName, Player aHand, Game aGame)
   {
     return new Card(aType, aName, aHand, this, aGame);
   }

@@ -115,7 +115,7 @@ public class Game
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Card addCard(CardType aType, String aName, Player aHand, Player aNotebook)
+  public Card addCard(Card.CardType aType, String aName, Player aHand, Player aNotebook)
   {
     return new Card(aType, aName, aHand, aNotebook, this);
   }
@@ -292,5 +292,7 @@ public class Game
   // line 54 "model.ump"
   private Card[] envelope = new Card[3] ;
 
-  
+  public static void main(String[] args) {
+
+  }
 }
