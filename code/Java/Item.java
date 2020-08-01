@@ -15,6 +15,9 @@ public class Item
 
   //Item Associations
   private Cell cell;
+  private Card.CardName cardName;
+  private String printString;
+
   private Board board;
 
   //------------------------
@@ -22,6 +25,24 @@ public class Item
   //------------------------
 
   //This constructor doesn't seem necessary, commented it out - Elias
+
+  public Item(Cell cell, Card.CardName cardName, String printString) {
+    this.cell = cell;
+    this.cardName = cardName;
+    this.printString = printString;
+  }
+
+  public String toString() {
+    return printString;
+  }
+
+  public Cell getCell() {
+    return cell;
+  }
+
+  public Card.CardName getCardName() {
+    return cardName;
+  }
 
 //  public Item(Cell aCell, Board aBoard)
 //  {

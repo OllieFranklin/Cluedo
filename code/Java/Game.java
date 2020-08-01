@@ -3,8 +3,6 @@ package Java;
 /*This code was generated using the UMPLE 1.30.0.5074.a43557235 modeling language!*/
 
 
-import jdk.dynalink.CallSiteDescriptor;
-
 import java.io.File;
 import java.util.*;
 
@@ -19,11 +17,11 @@ public class Game
 
   //Game Associations
   private Board board;
-  private List<Card> cards;
-  private Map<Card.CardName, Player> players;
+  private final List<Card> cards;
+  private final Map<Card.CardName, Player> humanPlayers;
   private Set<Card> envelope;
 
-  private Scanner inputScanner;   // for getting user input
+  private final Scanner inputScanner;   // for getting user input
 
   //------------------------
   // CONSTRUCTOR
@@ -51,17 +49,20 @@ public class Game
     for (Card.CardName name : Card.CardName.values())
       cards.add(new Card(name));
 
-    players = new HashMap<>();
+    humanPlayers = new HashMap<>();
 
+    // TODO: should there be a check on the number of player? e.g. can't have just 1 player
     System.out.println("Welcome to Cluedo!");
     System.out.println("Choose which characters will be controlled by players");
     for (Card.CardName card : Card.CardName.values(Card.CardType.PLAYER)) {
       if (getBooleanInput("Play as " + card + "?")) {
-        players.put(card, new Player());
+        humanPlayers.put(card, board.getPlayer(card));
       }
     }
 
     dealCards();
+
+    board.printBoardAndNotebook(humanPlayers.values().iterator().next());
   }
 
   public boolean getBooleanInput(String question) {
@@ -89,7 +90,7 @@ public class Game
 
     envelope = new HashSet<>();
     Set<Card.CardType> typesNotInEnvelope = new HashSet<>(Set.of(Card.CardType.values()));
-    Iterator<Player> playerIterator = players.values().iterator();
+    Iterator<Player> playerIterator = humanPlayers.values().iterator();
 
     for (Card card : cards) {
       if (typesNotInEnvelope.contains(card.getName().getType())) {
@@ -97,51 +98,10 @@ public class Game
         typesNotInEnvelope.remove(card.getName().getType());
       } else {
         if (!playerIterator.hasNext())
-          playerIterator = players.values().iterator();
+          playerIterator = humanPlayers.values().iterator();
         playerIterator.next().dealCard(card);
       }
     }
-  }
-
-  /**
-   * Print the board, and the notebook of a given player
-   * TODO: should take a player as an argument?
-   */
-  public void printBoardAndNotebook() {
-
-    // construct a StringBuilder array from String literal array
-    StringBuilder[] output = new StringBuilder[Board.printedBoard.length];
-    for (int i = 0; i < output.length; i++) {
-      output[i] = new StringBuilder(Board.printedBoard[i]);
-    }
-
-    // replace player/weapon cells with their Strings
-    // TODO: actually implement players and weapons
-    try {
-      replaceCell(0, 9, "CM", output);
-      replaceCell(8, 10, "PP", output);
-    } catch (Exception e) {
-      e.printStackTrace();
-      return;
-    }
-
-    for (StringBuilder sb : output)
-      System.out.println(sb);
-  }
-
-  /**
-   * Replace a given cell in the StringBuilder array with a new String
-   * @param row The row to make the replacement
-   * @param col The col index of the cell (NOT AN INDEX INTO THE STRING)
-   * @param replacement The String to replace (must be 2 characters long)
-   * @param text The StringBuilder array to make the replacement on
-   * @throws Exception If the String is not 2 characters long
-   */
-  private static void replaceCell(int row, int col, String replacement, StringBuilder[] text) throws Exception {
-
-    if (replacement.length() != 2)
-      throw new Exception("Wrong sized replacement String");
-    text[row].replace(col*2, col*2+replacement.length(), replacement);
   }
 
   //------------------------

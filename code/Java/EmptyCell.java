@@ -17,9 +17,9 @@ public class EmptyCell extends Cell
   // CONSTRUCTOR
   //------------------------
 
-  public EmptyCell(Board aBoard)
+  public EmptyCell(Board aBoard, int row, int col)
   {
-//    super(aBoard);    <- I don't think this is necessary. - Elias
+    super(row, col);
   }
 
   //------------------------

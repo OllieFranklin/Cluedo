@@ -15,36 +15,40 @@ public class Player extends Item
   //------------------------
 
   //Player Associations
-  private Set<Card> cards;
-  private List<Card> re;
-  private List<Game> games;
+  private Map<Card.CardName, Card> hand;         // the physical cards that the player holds
+  private Map<Card.CardName, Card> inferences;   // the cards that the player knows are not the murder circumstances
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  //Current uses super() which it probably doesn't need to/shouldn't? Commented because it prevented compilation - Elias
-
-  public Player() {
-    cards = new HashSet<>();
+  public Player(Cell cell, Card.CardName cardName, String printString) {
+    super(cell, cardName, printString);
+    hand = new HashMap<>();
+    inferences = new HashMap<>();
   }
-
-  // bruh I tried using the pre-written add card method and it's awful - Ollie
-  public boolean dealCard(Card card) {
-    return cards.add(card);
-  }
-
-//  public Player(Cell aCell, Board aBoard)
-//  {
-//    super(aCell, aBoard);
-//    cards = new ArrayList<Card>();
-//    re = new ArrayList<Card>();
-//    games = new ArrayList<Game>();
-//  }
 
   //------------------------
   // INTERFACE
   //------------------------
+
+  // bruh I tried using the pre-written add card method and it's awful - Ollie
+  public void dealCard(Card card) {
+    hand.put(card.getName(), card);
+    inferences.put(card.getName(), card);
+  }
+
+  public boolean holdsCard(Card.CardName cardName) {
+    return hand.containsKey(cardName);
+  }
+
+  public boolean knowAboutCard(Card.CardName cardName) {
+    return inferences.containsKey(cardName);
+  }
+
+  public String toString() {
+    return super.toString();
+  }
 
   //Prevented compilation - Elias
 

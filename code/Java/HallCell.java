@@ -20,9 +20,9 @@ public class HallCell extends Cell
   // CONSTRUCTOR
   //------------------------
 
-  public HallCell(Board aBoard, boolean aIsEntrance)
+  public HallCell(Board aBoard, int row, int col, boolean aIsEntrance)
   {
-//    super(aBoard);    <- I don't think this is necessary - Elias
+    super(row, col);
     isEntrance = aIsEntrance;
   }
 

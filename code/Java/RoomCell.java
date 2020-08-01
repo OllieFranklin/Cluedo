@@ -27,9 +27,9 @@ public class RoomCell extends Cell
   // CONSTRUCTOR
   //------------------------
 
-  public RoomCell(Board aBoard, boolean aIsDoor, Card.CardName aRoom)
+  public RoomCell(Board aBoard, int row, int col, boolean aIsDoor, Card.CardName aRoom)
   {
-//    super(aBoard);    <- I don't think this is necessary - Elias
+    super(row, col);
     isDoor = aIsDoor;
     room = aRoom;
   }
