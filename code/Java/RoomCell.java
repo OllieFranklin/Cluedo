@@ -13,7 +13,7 @@ public class RoomCell extends Cell
   // ENUMERATIONS
   //------------------------
 
-  public enum RoomName { KITCHEN, BALLROOM, CONSERVATORY, DINING_ROOM, BILLIARD_ROOM, LIBRARY, LOUNGE, HALL, STUDY }
+//  public enum RoomName { KITCHEN, BALLROOM, CONSERVATORY, DINING_ROOM, BILLIARD_ROOM, LIBRARY, LOUNGE, HALL, STUDY }
 
   //------------------------
   // MEMBER VARIABLES
@@ -21,13 +21,13 @@ public class RoomCell extends Cell
 
   //RoomCell Attributes
   private boolean isDoor;
-  private RoomName room;
+  private Card.CardName room;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public RoomCell(Board aBoard, boolean aIsDoor, RoomName aRoom)
+  public RoomCell(Board aBoard, boolean aIsDoor, Card.CardName aRoom)
   {
 //    super(aBoard);    <- I don't think this is necessary - Elias
     isDoor = aIsDoor;
@@ -46,7 +46,7 @@ public class RoomCell extends Cell
     return wasSet;
   }
 
-  public boolean setRoom(RoomName aRoom)
+  public boolean setRoom(Card.CardName aRoom)
   {
     boolean wasSet = false;
     room = aRoom;
@@ -59,7 +59,7 @@ public class RoomCell extends Cell
     return isDoor;
   }
 
-  public RoomName getRoom()
+  public Card.CardName getRoom()
   {
     return room;
   }

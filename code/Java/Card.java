@@ -2,7 +2,7 @@ package Java;
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.30.0.5074.a43557235 modeling language!*/
 
-
+import java.util.ArrayList;
 
 // line 40 "model.ump"
 // line 113 "model.ump"
@@ -13,11 +13,68 @@ public class Card
   // MEMBER VARIABLES
   //------------------------
 
-  static enum CardType { PLAYER, WEAPON, ROOM }
+  public enum CardType { PLAYER, WEAPON, ROOM }
+
+  // TODO: I CAN'T THINK OF A NICE WAY TO DO THIS - OLLIE
+
+  public enum CardName {
+
+    // player cards
+    COLONEL_MUSTARD(CardType.PLAYER, "Colonel Mustard"),
+    PROFESSOR_PLUM(CardType.PLAYER, "Professor Plum"),
+    REVEREND_GREEN(CardType.PLAYER, "Reverend Green"),
+    MRS_PEACOCK(CardType.PLAYER, "Mrs Peacock"),
+    MISS_SCARLET(CardType.PLAYER, "Miss Scarlet"),
+    MRS_WHITE(CardType.PLAYER, "Mrs White"),
+
+    // weapon cards
+    DAGGER(CardType.WEAPON, "Dagger"),
+    CANDLESTICK(CardType.WEAPON, "Candlestick"),
+    REVOLVER(CardType.WEAPON, "Revolver"),
+    ROPE(CardType.WEAPON, "Rope"),
+    LEAD_PIPE(CardType.WEAPON, "Lead Pipe"),
+    SPANNER(CardType.WEAPON, "Spanner"),
+
+    // room cards
+    KITCHEN(CardType.ROOM, "Kitchen"),
+    BALLROOM(CardType.ROOM, "Ballroom"),
+    CONSERVATORY(CardType.ROOM, "Conservatory"),
+    DINING_ROOM(CardType.ROOM, "Dining Room"),
+    BILLIARD_ROOM(CardType.ROOM, "Billiard Room"),
+    LIBRARY(CardType.ROOM, "Library"),
+    LOUNGE(CardType.ROOM, "Lounge"),
+    HALL(CardType.ROOM, "Hall"),
+    STUDY(CardType.ROOM, "Study");
+
+    private final CardType type;
+    private final String name;
+
+    CardName(CardType type, String name) {
+      this.type = type;
+      this.name = name;
+    }
+
+    public CardType getType() {
+      return type;
+    }
+
+    public String toString() {
+      return name;
+    }
+
+    public static CardName[] values(CardType type) {
+      ArrayList<CardName> output = new ArrayList<>();
+
+      for (CardName c : values())
+        if (c.getType() == type)
+          output.add(c);
+
+      return output.toArray(new CardName[0]);
+    }
+  }
 
   //Card Attributes
-  private CardType type;
-  private String name;
+  private CardName name;
 
   //Card Associations
   private Player hand;
@@ -29,6 +86,15 @@ public class Card
   //------------------------
 
   //Card constructor needed, but changes to Game will need to be made - Elias
+
+  // this will do for now - Ollie
+  public Card(CardName name) {
+    this.name = name;
+  }
+
+  public CardName getName() {
+    return name;
+  }
 
 //  public Card(CardType aType, String aName, Player aHand, Player aNotebook, Game aGame)
 //  {

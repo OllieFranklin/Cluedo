@@ -20,7 +20,10 @@ public class Game
   //Game Associations
   private Board board;
   private List<Card> cards;
-  private List<Player> players;
+  private Map<Card.CardName, Player> players;
+  private Set<Card> envelope;
+
+  private Scanner inputScanner;   // for getting user input
 
   //------------------------
   // CONSTRUCTOR
@@ -41,9 +44,63 @@ public class Game
 
   public Game()
   {
+    inputScanner = new Scanner(System.in);
+
     board = new Board(new File("data/cell-data.txt"), new File("data/printed-board.txt"));
-    cards = new ArrayList<Card>();
-    players = new ArrayList<Player>();
+    cards = new ArrayList<>();
+    for (Card.CardName name : Card.CardName.values())
+      cards.add(new Card(name));
+
+    players = new HashMap<>();
+
+    System.out.println("Welcome to Cluedo!");
+    System.out.println("Choose which characters will be controlled by players");
+    for (Card.CardName card : Card.CardName.values(Card.CardType.PLAYER)) {
+      if (getBooleanInput("Play as " + card + "?")) {
+        players.put(card, new Player());
+      }
+    }
+
+    dealCards();
+  }
+
+  public boolean getBooleanInput(String question) {
+    while (true) {
+      System.out.print(question + " (y/n): ");
+      String input = inputScanner.next();
+      System.out.print("");
+      if (input.equalsIgnoreCase("Y")) {
+        return true;
+      }
+      if (input.equalsIgnoreCase("N")) {
+        return false;
+      }
+
+      System.out.println("Must answer Y or N");
+    }
+  }
+
+  /**
+   * Establish murder circumstances and deal cards to players
+   */
+  public void dealCards() {
+
+    Collections.shuffle(cards);
+
+    envelope = new HashSet<>();
+    Set<Card.CardType> typesNotInEnvelope = new HashSet<>(Set.of(Card.CardType.values()));
+    Iterator<Player> playerIterator = players.values().iterator();
+
+    for (Card card : cards) {
+      if (typesNotInEnvelope.contains(card.getName().getType())) {
+        envelope.add(card);
+        typesNotInEnvelope.remove(card.getName().getType());
+      } else {
+        if (!playerIterator.hasNext())
+          playerIterator = players.values().iterator();
+        playerIterator.next().dealCard(card);
+      }
+    }
   }
 
   /**
@@ -333,17 +390,9 @@ public class Game
 //      aPlayer.removeGame(this);
 //    }
 //  }
-  
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 54 "model.ump"
-  private Card[] envelope = new Card[3];
+
 
   public static void main(String[] args) {
-
-    Game game = new Game();
-    game.printBoardAndNotebook();
+    new Game();
   }
 }

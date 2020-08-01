@@ -15,7 +15,7 @@ public class Player extends Item
   //------------------------
 
   //Player Associations
-  private List<Card> cards;
+  private Set<Card> cards;
   private List<Card> re;
   private List<Game> games;
 
@@ -24,6 +24,15 @@ public class Player extends Item
   //------------------------
 
   //Current uses super() which it probably doesn't need to/shouldn't? Commented because it prevented compilation - Elias
+
+  public Player() {
+    cards = new HashSet<>();
+  }
+
+  // bruh I tried using the pre-written add card method and it's awful - Ollie
+  public boolean dealCard(Card card) {
+    return cards.add(card);
+  }
 
 //  public Player(Cell aCell, Board aBoard)
 //  {

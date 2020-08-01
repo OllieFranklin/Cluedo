@@ -64,7 +64,7 @@ public class Board
           char c1 = line.charAt(i);
           char c2 = line.charAt(i + 1);
           if (c1 == 'R' || c1 == 'D') {
-            RoomCell.RoomName roomType = RoomCell.RoomName.values()[Character.getNumericValue(c2)];
+            Card.CardName roomType = Card.CardName.values(Card.CardType.ROOM)[Character.getNumericValue(c2)];
             cells[col][row] = new RoomCell(this, c1 == 'D', roomType);
           } else if (c1 == '░' || c1 == '▒') {
             cells[col][row] = new HallCell(this, c1 == '▒');
