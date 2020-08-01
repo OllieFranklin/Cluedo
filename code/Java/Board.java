@@ -2,7 +2,6 @@ package Java;
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.30.0.5074.a43557235 modeling language!*/
 
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -72,6 +71,8 @@ public class Board
         }
         col++;
       }
+
+      System.out.println();
 
     } catch (FileNotFoundException e) {
       System.out.println("No valid file found");

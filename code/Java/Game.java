@@ -40,7 +40,7 @@ public class Game
 
   public Game()
   {
-    board = new Board(new File("Java\\cell-data.txt"));
+    board = new Board(new File("data/cell-data.txt"));
     cards = new ArrayList<Card>();
     players = new ArrayList<Player>();
   }
