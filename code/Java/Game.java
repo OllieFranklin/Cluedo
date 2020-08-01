@@ -3,8 +3,9 @@ package Java;
 /*This code was generated using the UMPLE 1.30.0.5074.a43557235 modeling language!*/
 
 
+import jdk.dynalink.CallSiteDescriptor;
+
 import java.io.File;
-import java.nio.file.Path;
 import java.util.*;
 
 // line 48 "model.ump"
@@ -40,9 +41,50 @@ public class Game
 
   public Game()
   {
-    board = new Board(new File("data/cell-data.txt"));
+    board = new Board(new File("data/cell-data.txt"), new File("data/printed-board.txt"));
     cards = new ArrayList<Card>();
     players = new ArrayList<Player>();
+  }
+
+  /**
+   * Print the board, and the notebook of a given player
+   * TODO: should take a player as an argument?
+   */
+  public void printBoardAndNotebook() {
+
+    // construct a StringBuilder array from String literal array
+    StringBuilder[] output = new StringBuilder[Board.printedBoard.length];
+    for (int i = 0; i < output.length; i++) {
+      output[i] = new StringBuilder(Board.printedBoard[i]);
+    }
+
+    // replace player/weapon cells with their Strings
+    // TODO: actually implement players and weapons
+    try {
+      replaceCell(0, 9, "CM", output);
+      replaceCell(8, 10, "PP", output);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return;
+    }
+
+    for (StringBuilder sb : output)
+      System.out.println(sb);
+  }
+
+  /**
+   * Replace a given cell in the StringBuilder array with a new String
+   * @param row The row to make the replacement
+   * @param col The col index of the cell (NOT AN INDEX INTO THE STRING)
+   * @param replacement The String to replace (must be 2 characters long)
+   * @param text The StringBuilder array to make the replacement on
+   * @throws Exception If the String is not 2 characters long
+   */
+  private static void replaceCell(int row, int col, String replacement, StringBuilder[] text) throws Exception {
+
+    if (replacement.length() != 2)
+      throw new Exception("Wrong sized replacement String");
+    text[row].replace(col*2, col*2+replacement.length(), replacement);
   }
 
   //------------------------
@@ -300,6 +342,8 @@ public class Game
   private Card[] envelope = new Card[3];
 
   public static void main(String[] args) {
+
     Game game = new Game();
+    game.printBoardAndNotebook();
   }
 }

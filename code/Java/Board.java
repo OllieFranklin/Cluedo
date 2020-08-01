@@ -15,10 +15,14 @@ public class Board
   // MEMBER VARIABLES
   //------------------------
 
+  public static String[] printedBoard;
+
   //Board Associations
   private Cell[][] cells;
   private List<Item> items;
   private Game game;
+
+
 
   //------------------------
   // CONSTRUCTOR
@@ -46,10 +50,10 @@ public class Board
 
   //-----
 
-  public Board(File dataFile) {
+  public Board(File dataFile, File printedBoardFile) {
     try {
       Scanner sc = new Scanner(dataFile);
-      Cell[][] cells = new Cell[25][24];
+      cells = new Cell[25][24];
 
       int col = 0;
 
@@ -72,7 +76,12 @@ public class Board
         col++;
       }
 
-      System.out.println();
+      sc = new Scanner(printedBoardFile);
+      printedBoard = new String[25];
+      int row = 0;
+      while (sc.hasNext()) {
+        printedBoard[row++] = sc.nextLine();
+      }
 
     } catch (FileNotFoundException e) {
       System.out.println("No valid file found");
