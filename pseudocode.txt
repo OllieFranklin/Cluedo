@@ -1,0 +1,67 @@
+aPlayersTurn() {
+
+	if (player previously made an incorrect accusation)
+		return (they're not allowed to make moves any more)
+
+	if (player was teleported to this room between prev turn and now) {
+		player.justTeleported = false;
+		if (they want to make a suggestion) {
+			makeSuggestion();
+			return
+		}
+	}
+	
+	prevRoom = player in a room ? player's current room : null
+
+	roll dice
+
+	do {
+		player inputs a string of moves
+	} while (string of moves invalid);
+
+	move the player
+
+	if (player in hallway || player still in prevRoom)
+		end their turn (return)
+
+	makeSuggestion();
+}
+
+makeSuggestion() {
+	
+	pick a weapon
+	pick a suspect
+
+	if (weapon not in room)
+		move weapon into room
+	if (suspect not in room) {
+		move suspect into room
+		suspect.justTeleported = true
+	}
+
+	for (each player clockwise of current player) {
+		if (player has 1 of the cards) {
+			don't need to ask them anything
+			add the information to our notebook
+			break
+		} else if (player has >1 of the cards) {
+			ask them which card they want to show
+			add the information to our notebook
+			break
+		}
+	}
+
+	if (no one refuted the suggestion && we want to make an accusation)
+		makeAccusation();
+}
+
+makeAccusation() {
+	pick a player
+	pick a room (any room)
+	pick a weapon
+
+	if (accusation is correct)
+		player wins! game is over
+	else
+		player loses (they can't play any more)
+}
