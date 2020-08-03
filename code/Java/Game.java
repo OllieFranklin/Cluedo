@@ -5,6 +5,7 @@ package Java;
 
 import java.io.File;
 import java.util.*;
+import java.util.Scanner;
 
 // line 48 "model.ump"
 // line 120 "model.ump"
@@ -52,6 +53,7 @@ public class Game
     humanPlayers = new HashMap<>();
 
     System.out.println("Welcome to Cluedo!");
+    
     System.out.println("Choose which characters will be controlled by players");
     for (Card.CardName card : Card.CardName.values(Card.CardType.PLAYER)) {
       if (getBooleanInput("Play as " + card + "?")) {
@@ -63,15 +65,76 @@ public class Game
     if (humanPlayers.keySet().size() < 3) {
       System.out.println("Cluedo is for 3-6 players, this is an invalid number of players");
       // TODO: Then just, don't do the rest of the game? Maybe add a thing that goes back to character select?
+      
+      
+    //this will not work if players are less than 3 again
+      if(getBooleanInput("Do you still want to play?")) {
+    	  humanPlayers.clear();
+    	  System.out.println("Choose which characters will be controlled by players");
+    	  for (Card.CardName card : Card.CardName.values(Card.CardType.PLAYER)) {
+    	      if (getBooleanInput("Play as " + card + "?")) {
+    	        humanPlayers.put(card, board.getPlayer(card));
+    	      }
+    	    }
+    	  startGame();
+      }
+      
     } else {
-
-      dealCards();
-
-      board.printBoardAndNotebook(humanPlayers.values().iterator().next());
-
+    	startGame();
+      
     }
 
   }
+  
+  public void startGame() {
+	  
+	  dealCards();
+
+      board.printBoardAndNotebook(humanPlayers.values().iterator().next());
+      
+      Player currentPlayer = humanPlayers.values().iterator().next();
+      //need a better way for iterating through players... such that it goes through clockwise on the board
+      //first player to start:
+      playATurn(currentPlayer);
+	  
+  }
+  
+  public void playATurn(Player currentPlayer) {
+	 
+		// if a player isnt out of the game
+		// roll dice
+		System.out.println("It is now " + currentPlayer + "'s turn: ");
+		if (getBooleanInput("Roll the dice?")) {
+			int moveCount = rollDice();
+			System.out.println("You can move " + moveCount + " spaces");
+			
+			//takes input for moves -- this looks so janky
+			System.out.println("Enter a sequence of moves: W, A, S, D: ");
+			Scanner reader = new Scanner(System.in);
+			String c = reader.next(); 
+			char[] moveList = new char[moveCount];
+			for (int i = 0; i < c.length(); i++) {
+				moveList[i] = c.charAt(i);
+				System.out.println(moveList[i]);//debug
+				
+			}
+			
+
+		}
+		// move
+
+		// if player is in a room
+		
+			// make a suggestion
+				// if suggestion is not contested
+					// make an accusation
+
+  }
+  
+  public int rollDice() {
+	  return (int) (Math.random()*12);
+  }
+  
 
   public boolean getBooleanInput(String question) {
     while (true) {
@@ -363,4 +426,14 @@ public class Game
   public static void main(String[] args) {
     new Game();
   }
+
+public void removeCard(Card card) {
+	// TODO Auto-generated method stub
+	
+}
+
+public void addCard(Card card) {
+	// TODO Auto-generated method stub
+	
+}
 }
