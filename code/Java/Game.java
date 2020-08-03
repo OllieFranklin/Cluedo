@@ -51,7 +51,6 @@ public class Game
 
     humanPlayers = new HashMap<>();
 
-    // TODO: should there be a check on the number of player? e.g. can't have just 1 player
     System.out.println("Welcome to Cluedo!");
     System.out.println("Choose which characters will be controlled by players");
     for (Card.CardName card : Card.CardName.values(Card.CardType.PLAYER)) {
@@ -60,9 +59,18 @@ public class Game
       }
     }
 
-    dealCards();
+    // Checks number of players is valid (3 to 6 according to the rules linked in handout)
+    if (humanPlayers.keySet().size() < 3) {
+      System.out.println("Cluedo is for 3-6 players, this is an invalid number of players");
+      // TODO: Then just, don't do the rest of the game? Maybe add a thing that goes back to character select?
+    } else {
 
-    board.printBoardAndNotebook(humanPlayers.values().iterator().next());
+      dealCards();
+
+      board.printBoardAndNotebook(humanPlayers.values().iterator().next());
+
+    }
+
   }
 
   public boolean getBooleanInput(String question) {
