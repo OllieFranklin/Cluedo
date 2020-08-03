@@ -51,6 +51,8 @@ public class Board
 
   public Board(File dataFile, File printedBoardFile) {
 
+    // creates room objects and associates cell sets with them
+
     initCells(dataFile, printedBoardFile);
 
     players = new HashMap<>();
@@ -64,11 +66,33 @@ public class Board
     players.put(Card.CardName.MISS_SCARLET, new Player(cells[24][7], Card.CardName.MISS_SCARLET, "MS"));
     players.put(Card.CardName.MRS_WHITE, new Player(cells[0][9], Card.CardName.MRS_WHITE, "MW"));
 
-    // add weapons to items
-    // TODO: PLACE A WEAPON IN EACH ROOM RANDOMLY
-    // TODO: NEED TO MAKE A Map<Card.CardType, Set<Cell>> roomToCells
-//    for (Card.CardName cardName : Card.CardName.values(Card.CardType.WEAPON))
-//      weapons.put(cardName, new Weapon());
+    // shuffles rooms so weapon placement is randomised each game
+    List<Card.CardName> unusedWeapons = new ArrayList<>(Arrays.asList(Card.CardName.values(Card.CardType.WEAPON)));
+    List<Card.CardName> shuffledRooms = new ArrayList<>(Arrays.asList(Card.CardName.values(Card.CardType.ROOM)));
+    Collections.shuffle(unusedWeapons);
+    Collections.shuffle(shuffledRooms);
+
+    // places weapons randomly in rooms
+    // TODO: THIS ALWAYS PLACES WEAPONS IN TOP-LEFT OF ROOM, COULD CHANGE TO BE MORE RANDOM?
+    // TODO: WEAPON PRINTSTRING CURRENTLY FIRST 2 LETTERS FOR EASE, COULD HAVE BETTER PRINTSTRINGS
+    for (Card.CardName room : shuffledRooms) {
+      if (unusedWeapons.isEmpty()) { break; } // stop placing weapons if they've all been placed
+      for (int row = 0; row < 25; row++) {
+        for (int col = 0; col < 24; col++) {
+          Cell thisCell = cells[row][col];
+          if (thisCell.getClass().equals(RoomCell.class) && ((RoomCell) thisCell).getRoom().equals(room)) {
+            Card.CardName nextWeapon = unusedWeapons.remove(0);
+            String printString = nextWeapon.name().substring(0, 2);
+            weapons.put(nextWeapon, new Weapon(thisCell, nextWeapon, printString));
+
+            // Did this to break both loops, perhaps could be done better?
+            row = 25;
+            col = 24;
+          }
+        }
+      }
+    }
+
   }
 
   public void initCells(File dataFile, File printedBoardFile) {
