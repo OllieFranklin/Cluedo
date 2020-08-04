@@ -7,6 +7,9 @@ import java.io.File;
 import java.util.*;
 import java.util.Scanner;
 
+import Java.Card.CardName;
+import Java.Card.CardType;
+
 // line 48 "model.ump"
 // line 120 "model.ump"
 public class Game
@@ -104,6 +107,8 @@ public class Game
               return;
           }
       }
+      
+     
 
       // TODO: record the player's current cell (but I think Elias is working on that rn)
 
@@ -119,15 +124,23 @@ public class Game
       // TODO: figure out if the player is in a new room
       if (true /* player is in a new room */)
           makeSuggestion(currentPlayer);
+      //TODO: if nobody contests the suggestion, ask if they want to make an accusation
+      if (getBooleanInput("Make an accusation? ")) {
+    	  makeAccusation(currentPlayer);
+      }
   }
 
-  // todo: this method
+  // TODO: this method
   public void makeSuggestion(Player currentPlayer) {
-
+	  System.out.println("Make a Suggestion: ");
+	  
 //      pick a weapon
+	  System.out.println("Select which weapon to use: ");
 //      pick a suspect
+	  System.out.println("Select which suspect to use: ");
 //
 //      if (weapon not in room)
+	  
 //      move weapon into room
 //      if (suspect not in room) {
 //          move suspect into room
@@ -151,19 +164,136 @@ public class Game
 
   }
 
-    // todo: this method
+    // TODO: this method
     public void makeAccusation(Player currentPlayer) {
+    	System.out.println("Make an Accusation: ");
+    	
+    	for(Card c: envelope) {
+    		System.out.println(c.getName());
+    		
+    	}
+    	
+    	CardName suspect = checkSuspect();
+    	System.out.println("suspect: " + suspect.name());
+    	
+    	CardName room = checkRoom();
+    	System.out.println("room: " + room.name());
+    	CardName weapon = checkWeapon();
+    	System.out.println("weapon: " + weapon.name());
 
-//        pick a player
-//        pick a room (any room)
-//        pick a weapon
-//
-//        if (accusation is correct)
-//            player wins! game is over
-//	    else
-//            player loses (they can't play any more)
-
+    	
+    	int correctCount=0;
+    	for(Card c: envelope) {
+    		
+    		if(c.getName().equals(suspect)){
+    			correctCount++;
+    		}
+    		else if(c.getName().equals(room)){
+    			correctCount++;
+    		}
+    		else if(c.getName().equals(weapon)) {
+    			correctCount++;
+    		}
+    	
+    	}
+    	if(correctCount==3) {
+    		// player wins! game is over
+    		System.out.println("Player " + currentPlayer + " wins!");
+    	}
+    	else {
+    		//player loses (they can't play any more)
+    		System.out.println("Wrong accusation " + currentPlayer + " is out of the game!");
+    	}
+    	
     }
+    
+	public CardName checkSuspect() {
+		//pick a suspect
+		System.out.println("Select which suspect to use: ");
+		Scanner scanSuspect = new Scanner(System.in);
+		String suspect = scanSuspect.next();
+//		scanSuspect.close();commented out as it causes it to bug out
+
+		switch (suspect) {
+		case "CM":
+			return Card.CardName.COLONEL_MUSTARD;
+		case "PP":
+			return Card.CardName.PROFESSOR_PLUM;
+		case "RG":
+			return Card.CardName.REVEREND_GREEN;
+		case "MP":
+			return Card.CardName.MRS_PEACOCK;
+		case "MS":
+			return Card.CardName.MISS_SCARLET;
+		case "MW":
+			return Card.CardName.MRS_WHITE;
+		default:
+			System.out.println("No such character");
+			break;
+		}
+		return null;
+
+	}
+    public CardName checkRoom() {
+//      pick a room (any room)
+  	System.out.println("Select which room to use: ");
+    	Scanner scanRoom = new Scanner(System.in);
+    	String room = scanRoom.next();
+//    	scanRoom.close();commented out as it causes it to bug out
+    	
+
+    	switch (room) {
+		case "kitchen":
+			return Card.CardName.KITCHEN;
+		case "ballroom":
+			return Card.CardName.BALLROOM;
+		case "conservatory":
+			return Card.CardName.CONSERVATORY;
+		case "diningroom":
+			return Card.CardName.DINING_ROOM;
+		case "billiardroom":
+			return Card.CardName.BILLIARD_ROOM;
+		case "library":
+			return Card.CardName.LIBRARY;
+		case "Lounge":
+			return Card.CardName.LOUNGE;
+		case "hall":
+			return Card.CardName.HALL;
+		case "study":
+			return Card.CardName.STUDY;
+		default:
+			System.out.println("No such room");
+			break;
+		}
+		return null;
+	
+	}
+    public CardName checkWeapon() {
+//      pick a weapon
+    	System.out.println("Select which weapon to use: ");
+    	Scanner scanWeapon = new Scanner(System.in);
+    	String weapon = scanWeapon.next();
+    	//scanWeapon.close();commented out as it causes it to bug out
+    	
+    	switch (weapon) {
+		case "dagger":
+			return Card.CardName.DAGGER;
+		case "candlestick":
+			return Card.CardName.CANDLESTICK;
+		case "revolver":
+			return Card.CardName.REVOLVER;
+		case "rope":
+			return Card.CardName.ROPE;
+		case "leadpipe":
+			return Card.CardName.LEAD_PIPE;
+		case "spanner":
+			return Card.CardName.SPANNER;
+		default:
+			System.out.println("No such weapon");
+			break;
+		}
+		return null;
+	}
   
   public int rollDice() {
       Random random = new Random();
@@ -178,6 +308,7 @@ public class Game
       System.out.println("Enter a sequence of moves: W, A, S, D: ");
       Scanner reader = new Scanner(System.in);
       String c = reader.next();
+      
 
       // can remove this at some point
       char[] moveList = new char[moveCount];
@@ -185,7 +316,7 @@ public class Game
           moveList[i] = c.charAt(i);
           System.out.println(moveList[i]);//debug
       }
-
+      
       // main move logic
       for (int i = 0; i < c.length(); i++) {
 
@@ -216,7 +347,7 @@ public class Game
               return false;
           }
       }
-
+      reader.close();
       return true;  // if it gets here, we've successfully moved for a whole move.
   }
 
