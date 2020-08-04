@@ -93,37 +93,84 @@ public class Game
   
   public void playATurn(Player currentPlayer) {
 
-      // TODO: Draw the board nicer (using multiple empty lines to clear console?)
+      if (currentPlayer.isOut())
+          return;
+
+      if (currentPlayer.wasTeleported()) {
+          currentPlayer.setWasTeleported(false);
+          System.out.println("\n\nYou were moved to this room due to another player's suggestion");
+          if (getBooleanInput("Skip your move and make a suggestion about this room? (y/n): ")) {
+              makeSuggestion(currentPlayer);
+              return;
+          }
+      }
+
+      // TODO: record the player's current cell (but I think Elias is working on that rn)
+
       board.printBoardAndNotebook(currentPlayer);
-		// if a player isnt out of the game
-		// roll dice
-		System.out.println("It is now " + currentPlayer + "'s turn: ");
-		if (getBooleanInput("Roll the dice?")) {
-			int moveCount = rollDice();
-			System.out.println("You can move " + moveCount + " spaces");
 
-            boolean moved = false;
-            while (!moved) {
-                Cell startingCell = currentPlayer.getCell();
-                moved = moveAPlayer(currentPlayer, moveCount);
-                if (!moved) {
-                    // moves player back to starting position if it doesn't successfully move.
-                    // surely there's a better way of this, I just aint big brained.
-                    currentPlayer.moveToCell(startingCell);
-                }
-            }
-		}
+      System.out.println("\n");
+      int numMoves = rollDice();
 
-		// if player is in a room
-		
-			// make a suggestion
-				// if suggestion is not contested
-					// make an accusation
+      while (!moveAPlayer(currentPlayer, numMoves)){}
+
+      board.printBoardAndNotebook(currentPlayer);
+
+      // TODO: figure out if the player is in a new room
+      if (true /* player is in a new room */)
+          makeSuggestion(currentPlayer);
+  }
+
+  // todo: this method
+  public void makeSuggestion(Player currentPlayer) {
+
+//      pick a weapon
+//      pick a suspect
+//
+//      if (weapon not in room)
+//      move weapon into room
+//      if (suspect not in room) {
+//          move suspect into room
+//          suspect.justTeleported = true
+//      }
+//
+//      for (each player clockwise of current player) {
+//          if (player has 1 of the cards) {
+//              don't need to ask them anything
+//              add the information to our notebook
+//              break
+//          } else if (player has >1 of the cards) {
+//              ask them which card they want to show
+//              add the information to our notebook
+//              break
+//          }
+//      }
+//
+//      if (no one refuted the suggestion && we want to make an accusation)
+//      makeAccusation();
 
   }
+
+    // todo: this method
+    public void makeAccusation(Player currentPlayer) {
+
+//        pick a player
+//        pick a room (any room)
+//        pick a weapon
+//
+//        if (accusation is correct)
+//            player wins! game is over
+//	    else
+//            player loses (they can't play any more)
+
+    }
   
   public int rollDice() {
-	  return new Random().nextInt(10) + 2;
+      Random random = new Random();
+      int d1 = 1 + random.nextInt(5);
+      int d2 = 1 + random.nextInt(5);
+	  System.out.println("You rolled a " + d1 + " and a " + d2);
+      return d1 + d2;
   }
 
   public boolean moveAPlayer(Player currentPlayer, int moveCount) {

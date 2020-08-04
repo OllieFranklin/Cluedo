@@ -18,6 +18,9 @@ public class Player extends Item
   private Map<Card.CardName, Card> hand;         // the physical cards that the player holds
   private Map<Card.CardName, Card> inferences;   // the cards that the player knows are not the murder circumstances
 
+  private boolean isOut;          // player is out of the game if they've made an incorrect accusation
+  private boolean wasTeleported;  // player was teleported into their current room < 1 turn ago
+
   //------------------------
   // CONSTRUCTOR
   //------------------------
@@ -48,6 +51,22 @@ public class Player extends Item
 
   public String toString() {
     return super.toString();
+  }
+
+  public boolean isOut() {
+    return isOut;
+  }
+
+  public void setOut() {
+    isOut = true;
+  }
+
+  public boolean wasTeleported() {
+    return wasTeleported;
+  }
+
+  public void setWasTeleported(boolean wasTeleported) {
+    this.wasTeleported = wasTeleported;
   }
 
   //Prevented compilation - Elias
