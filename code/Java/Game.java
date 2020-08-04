@@ -12,6 +12,15 @@ import java.util.Scanner;
 public class Game
 {
 
+    public static Card.CardName[] PLAYER_ORDER = {
+            Card.CardName.MISS_SCARLET,
+            Card.CardName.COLONEL_MUSTARD,
+            Card.CardName.MRS_WHITE,
+            Card.CardName.REVEREND_GREEN,
+            Card.CardName.MRS_PEACOCK,
+            Card.CardName.PROFESSOR_PLUM
+    };
+
   //------------------------
   // MEMBER VARIABLES
   //------------------------
@@ -19,7 +28,7 @@ public class Game
   //Game Associations
   private Board board;
   private final List<Card> cards;
-  private final Map<Card.CardName, Player> humanPlayers;
+  private Map<Card.CardName, Player> humanPlayers;
   private Set<Card> envelope;
 
   private final Scanner inputScanner;   // for getting user input
@@ -50,53 +59,36 @@ public class Game
     for (Card.CardName name : Card.CardName.values())
       cards.add(new Card(name));
 
-    humanPlayers = new HashMap<>();
-
     System.out.println("Welcome to Cluedo!");
-    
-    System.out.println("Choose which characters will be controlled by players");
-    for (Card.CardName card : Card.CardName.values(Card.CardType.PLAYER)) {
-      if (getBooleanInput("Play as " + card + "?")) {
-        humanPlayers.put(card, board.getPlayer(card));
-      }
-    }
+    initHumanPlayers();
+    dealCards();
 
-    // Checks number of players is valid (3 to 6 according to the rules linked in handout)
-    if (humanPlayers.keySet().size() < 3) {
-      System.out.println("Cluedo is for 3-6 players, this is an invalid number of players");
-      // TODO: Then just, don't do the rest of the game? Maybe add a thing that goes back to character select?
-      
-      
-    //this will not work if players are less than 3 again
-      if(getBooleanInput("Do you still want to play?")) {
-    	  humanPlayers.clear();
-    	  System.out.println("Choose which characters will be controlled by players");
-    	  for (Card.CardName card : Card.CardName.values(Card.CardType.PLAYER)) {
-    	      if (getBooleanInput("Play as " + card + "?")) {
-    	        humanPlayers.put(card, board.getPlayer(card));
-    	      }
-    	    }
-    	  startGame();
-      }
-      
-    } else {
-    	startGame();
-      
-    }
+    // TODO: need exit condition when game is won
+    Iterator<Player> currentPlayer = humanPlayers.values().iterator();
+    while (true) {
+        if (!currentPlayer.hasNext())
+            currentPlayer = humanPlayers.values().iterator();
 
+        playATurn(currentPlayer.next());
+    }
   }
-  
-  public void startGame() {
-	  
-	  dealCards();
 
-      board.printBoardAndNotebook(humanPlayers.values().iterator().next());
-      
-      Player currentPlayer = humanPlayers.values().iterator().next();
-      //need a better way for iterating through players... such that it goes through clockwise on the board
-      //first player to start:
-      playATurn(currentPlayer);
-	  
+  public void initHumanPlayers() {
+      while (true) {
+          humanPlayers = new LinkedHashMap<>();
+
+          System.out.println("Choose which characters will be controlled by players");
+          for (Card.CardName card : PLAYER_ORDER) {
+              if (getBooleanInput("Play as " + card + "?")) {
+                  humanPlayers.put(card, board.getPlayer(card));
+              }
+          }
+
+          if (humanPlayers.size() >= 3)
+              break;
+
+          System.out.println("Must have at least 3 players. Come back when you have more friends\n");
+      }
   }
   
   public void playATurn(Player currentPlayer) {
@@ -107,18 +99,18 @@ public class Game
 		if (getBooleanInput("Roll the dice?")) {
 			int moveCount = rollDice();
 			System.out.println("You can move " + moveCount + " spaces");
-			
+
 			//takes input for moves -- this looks so janky
 			System.out.println("Enter a sequence of moves: W, A, S, D: ");
 			Scanner reader = new Scanner(System.in);
-			String c = reader.next(); 
+			String c = reader.next();
 			char[] moveList = new char[moveCount];
 			for (int i = 0; i < c.length(); i++) {
 				moveList[i] = c.charAt(i);
 				System.out.println(moveList[i]);//debug
-				
+
 			}
-			
+
 
 		}
 		// move
@@ -132,9 +124,8 @@ public class Game
   }
   
   public int rollDice() {
-	  return (int) (Math.random()*12);
+	  return new Random().nextInt(10) + 2;
   }
-  
 
   public boolean getBooleanInput(String question) {
     while (true) {
@@ -162,6 +153,10 @@ public class Game
     envelope = new HashSet<>();
     Set<Card.CardType> typesNotInEnvelope = new HashSet<>(Set.of(Card.CardType.values()));
     Iterator<Player> playerIterator = humanPlayers.values().iterator();
+
+    // start iterator at random position (random "dealer" so Miss Scarlet doesn't get all the cards :P)
+    for (int i=0; i<Math.random() * humanPlayers.size(); i++)
+        playerIterator.next();
 
     for (Card card : cards) {
       if (typesNotInEnvelope.contains(card.getName().getType())) {
