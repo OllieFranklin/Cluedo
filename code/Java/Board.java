@@ -187,6 +187,10 @@ public class Board
     text[row].replace(col*2, col*2+replacement.length(), replacement);
   }
 
+  public Cell getCell(int row, int col) {
+    return cells[row][col];
+  }
+
   //------------------------
   // INTERFACE
   //------------------------

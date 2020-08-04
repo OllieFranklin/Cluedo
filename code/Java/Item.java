@@ -44,6 +44,8 @@ public class Item
     return cardName;
   }
 
+  public void moveToCell(Cell cell) { this.cell = cell; }
+
 //  public Item(Cell aCell, Board aBoard)
 //  {
 //    if (!setCell(aCell))

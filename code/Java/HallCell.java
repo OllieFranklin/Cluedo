@@ -43,10 +43,6 @@ public class HallCell extends Cell
     return isEntrance;
   }
   /* Code from template attribute_IsBoolean */
-  public boolean isIsEntrance()
-  {
-    return isEntrance;
-  }
 
   //Prevented compilation - Elias
 

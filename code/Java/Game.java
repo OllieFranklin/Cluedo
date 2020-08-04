@@ -92,7 +92,9 @@ public class Game
   }
   
   public void playATurn(Player currentPlayer) {
-	 
+
+      // TODO: Draw the board nicer (using multiple empty lines to clear console?)
+      board.printBoardAndNotebook(currentPlayer);
 		// if a player isnt out of the game
 		// roll dice
 		System.out.println("It is now " + currentPlayer + "'s turn: ");
@@ -100,6 +102,7 @@ public class Game
 			int moveCount = rollDice();
 			System.out.println("You can move " + moveCount + " spaces");
 
+			// TODO: Put all this move code into its own function to repeat it 'til valid, maybe?
 			//takes input for moves -- this looks so janky
 			System.out.println("Enter a sequence of moves: W, A, S, D: ");
 			Scanner reader = new Scanner(System.in);
@@ -111,6 +114,30 @@ public class Game
 
 			}
 
+			for (int i = 0; i < c.length(); i++) {
+
+			    Cell newCell;
+                // this stuff here will almost definitely throw IndexOutOfBoundErrors or similar - I'll fix at some time
+                // probs just surround with try/catch that repeats move code on catch?
+			    if (c.charAt(i) == 'W' || c.charAt(i) == 'w') {
+			        newCell = board.getCell(currentPlayer.getCell().getRow()-1, currentPlayer.getCell().getCol());
+                } else if (c.charAt(i) == 'A' || c.charAt(i) == 'a') {
+                    newCell = board.getCell(currentPlayer.getCell().getRow(), currentPlayer.getCell().getCol()-1);
+                } else if (c.charAt(i) == 'S' || c.charAt(i) == 's') {
+                    newCell = board.getCell(currentPlayer.getCell().getRow()+1, currentPlayer.getCell().getCol());
+                } else if (c.charAt(i) == 'D' || c.charAt(i) == 'd') {
+                    newCell = board.getCell(currentPlayer.getCell().getRow()-1, currentPlayer.getCell().getCol()+1);
+                } else {
+			        System.out.println("Invalid string to move with. Can only use W, A, S, and D to move.");
+			        break;
+                }
+
+			    if (isValidMove(currentPlayer.getCell(), newCell)) {
+			        currentPlayer.moveToCell(newCell);
+                } else {
+			        System.out.println("Invalid cell to move to.");
+                }
+            }
 
 		}
 		// move
@@ -125,6 +152,25 @@ public class Game
   
   public int rollDice() {
 	  return new Random().nextInt(10) + 2;
+  }
+
+  public boolean isValidMove(Cell playerCell, Cell newCell) {
+      // helper method to get if a cell is valid or not
+      if (newCell.getClass() == EmptyCell.class) {
+          return false;
+      }
+
+      if (playerCell.getClass() == HallCell.class) {
+          if (newCell.getClass() == HallCell.class) {
+              return true;
+          } else return ((HallCell) playerCell).getIsEntrance() && ((RoomCell) newCell).getIsDoor();
+      } else if (playerCell.getClass() == RoomCell.class) {
+          if (newCell.getClass() == RoomCell.class) {
+              return true;
+          } else return ((RoomCell) playerCell).getIsDoor() && ((HallCell) newCell).getIsEntrance();
+      }
+
+      return false; // it shouldn't get here, but just in case
   }
 
   public boolean getBooleanInput(String question) {
