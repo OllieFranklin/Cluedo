@@ -102,45 +102,17 @@ public class Game
 			int moveCount = rollDice();
 			System.out.println("You can move " + moveCount + " spaces");
 
-			// TODO: Put all this move code into its own function to repeat it 'til valid, maybe?
-			//takes input for moves -- this looks so janky
-			System.out.println("Enter a sequence of moves: W, A, S, D: ");
-			Scanner reader = new Scanner(System.in);
-			String c = reader.next();
-			char[] moveList = new char[moveCount];
-			for (int i = 0; i < c.length(); i++) {
-				moveList[i] = c.charAt(i);
-				System.out.println(moveList[i]);//debug
-
-			}
-
-			for (int i = 0; i < c.length(); i++) {
-
-			    Cell newCell;
-                // this stuff here will almost definitely throw IndexOutOfBoundErrors or similar - I'll fix at some time
-                // probs just surround with try/catch that repeats move code on catch?
-			    if (c.charAt(i) == 'W' || c.charAt(i) == 'w') {
-			        newCell = board.getCell(currentPlayer.getCell().getRow()-1, currentPlayer.getCell().getCol());
-                } else if (c.charAt(i) == 'A' || c.charAt(i) == 'a') {
-                    newCell = board.getCell(currentPlayer.getCell().getRow(), currentPlayer.getCell().getCol()-1);
-                } else if (c.charAt(i) == 'S' || c.charAt(i) == 's') {
-                    newCell = board.getCell(currentPlayer.getCell().getRow()+1, currentPlayer.getCell().getCol());
-                } else if (c.charAt(i) == 'D' || c.charAt(i) == 'd') {
-                    newCell = board.getCell(currentPlayer.getCell().getRow()-1, currentPlayer.getCell().getCol()+1);
-                } else {
-			        System.out.println("Invalid string to move with. Can only use W, A, S, and D to move.");
-			        break;
-                }
-
-			    if (isValidMove(currentPlayer.getCell(), newCell)) {
-			        currentPlayer.moveToCell(newCell);
-                } else {
-			        System.out.println("Invalid cell to move to.");
+            boolean moved = false;
+            while (!moved) {
+                Cell startingCell = currentPlayer.getCell();
+                moved = moveAPlayer(currentPlayer, moveCount);
+                if (!moved) {
+                    // moves player back to starting position if it doesn't successfully move.
+                    // surely there's a better way of this, I just aint big brained.
+                    currentPlayer.moveToCell(startingCell);
                 }
             }
-
 		}
-		// move
 
 		// if player is in a room
 		
@@ -152,6 +124,53 @@ public class Game
   
   public int rollDice() {
 	  return new Random().nextInt(10) + 2;
+  }
+
+  public boolean moveAPlayer(Player currentPlayer, int moveCount) {
+      //takes input for moves -- this looks so janky
+      System.out.println("Enter a sequence of moves: W, A, S, D: ");
+      Scanner reader = new Scanner(System.in);
+      String c = reader.next();
+
+      // can remove this at some point
+      char[] moveList = new char[moveCount];
+      for (int i = 0; i < c.length(); i++) {
+          moveList[i] = c.charAt(i);
+          System.out.println(moveList[i]);//debug
+      }
+
+      // main move logic
+      for (int i = 0; i < c.length(); i++) {
+
+          Cell newCell;
+          // catching ArrayIndexOutOfBoundExceptions to deal with edges of the board
+          try {
+              if (c.charAt(i) == 'W' || c.charAt(i) == 'w') {
+                  newCell = board.getCell(currentPlayer.getCell().getRow() - 1, currentPlayer.getCell().getCol());
+              } else if (c.charAt(i) == 'A' || c.charAt(i) == 'a') {
+                  newCell = board.getCell(currentPlayer.getCell().getRow(), currentPlayer.getCell().getCol() - 1);
+              } else if (c.charAt(i) == 'S' || c.charAt(i) == 's') {
+                  newCell = board.getCell(currentPlayer.getCell().getRow() + 1, currentPlayer.getCell().getCol());
+              } else if (c.charAt(i) == 'D' || c.charAt(i) == 'd') {
+                  newCell = board.getCell(currentPlayer.getCell().getRow() - 1, currentPlayer.getCell().getCol() + 1);
+              } else {
+                  System.out.println("Invalid string to move with. Can only use W, A, S, and D to move.");
+                  return false;
+              }
+
+              if (isValidMove(currentPlayer.getCell(), newCell)) {
+                  currentPlayer.moveToCell(newCell);
+              } else {
+                  System.out.println("Invalid cell to move to.");
+                  return false;
+              }
+          } catch (ArrayIndexOutOfBoundsException plsnomoveoutofboard) {
+              System.out.println("Cannot move off the board.");
+              return false;
+          }
+      }
+
+      return true;  // if it gets here, we've successfully moved for a whole move.
   }
 
   public boolean isValidMove(Cell playerCell, Cell newCell) {
