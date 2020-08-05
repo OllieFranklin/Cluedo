@@ -12,8 +12,7 @@ import Java.Card.CardType;
 
 // line 48 "model.ump"
 // line 120 "model.ump"
-public class Game
-{
+public class Game {
 
     public static Card.CardName[] PLAYER_ORDER = {
             Card.CardName.MISS_SCARLET,
@@ -24,23 +23,24 @@ public class Game
             Card.CardName.PROFESSOR_PLUM
     };
 
-  //------------------------
-  // MEMBER VARIABLES
-  //------------------------
+    //------------------------
+    // MEMBER VARIABLES
+    //------------------------
 
-  //Game Associations
-  private Board board;
-  private final List<Card> cards;
-  private Map<Card.CardName, Player> humanPlayers;
-  private Set<Card> envelope;
+    //Game Associations
+    private Board board;
+    private final List<Card> cards;
+    private Map<Card.CardName, Player> humanPlayers;
+    private Map<Card.CardType, Card> envelope;
 
-  private final Scanner inputScanner;   // for getting user input
+    private final Scanner inputScanner;   // for getting user input
+    private boolean gameOver = false;
 
-  //------------------------
-  // CONSTRUCTOR
-  //------------------------
+    //------------------------
+    // CONSTRUCTOR
+    //------------------------
 
-  //I think this version of the Game constructor isn't as useful as the other one - Elias
+    //I think this version of the Game constructor isn't as useful as the other one - Elias
 
 //  public Game(Board aBoard)
 //  {
@@ -53,93 +53,92 @@ public class Game
 //    players = new ArrayList<Player>();
 //  }
 
-  public Game()
-  {
-    inputScanner = new Scanner(System.in);
+    public Game() {
+        inputScanner = new Scanner(System.in);
 
-    board = new Board(new File("data/cell-data.txt"), new File("data/printed-board.txt"));
-    cards = new ArrayList<>();
-    for (Card.CardName name : Card.CardName.values())
-      cards.add(new Card(name));
+        board = new Board(new File("data/cell-data.txt"), new File("data/printed-board.txt"));
+        cards = new ArrayList<>();
+        for (Card.CardName name : Card.CardName.values())
+            cards.add(new Card(name));
 
-    System.out.println("Welcome to Cluedo!");
-    initHumanPlayers();
-    dealCards();
+        System.out.println("Welcome to Cluedo!");
+        initHumanPlayers();
+        dealCards();
 
-    // TODO: need exit condition when game is won
-    Iterator<Player> currentPlayer = humanPlayers.values().iterator();
-    while (true) {
-        if (!currentPlayer.hasNext())
-            currentPlayer = humanPlayers.values().iterator();
+        Iterator<Player> currentPlayer = humanPlayers.values().iterator();
+        while (!gameOver) {
+            if (!currentPlayer.hasNext())
+                currentPlayer = humanPlayers.values().iterator();
 
-        playATurn(currentPlayer.next());
+            playATurn(currentPlayer.next());
+        }
     }
-  }
 
-  public void initHumanPlayers() {
-      while (true) {
-          humanPlayers = new LinkedHashMap<>();
+    public void initHumanPlayers() {
+        while (true) {
+            humanPlayers = new LinkedHashMap<>();
 
-          System.out.println("Choose which characters will be controlled by players");
-          for (Card.CardName card : PLAYER_ORDER) {
-              if (getBooleanInput("Play as " + card + "?")) {
-                  humanPlayers.put(card, board.getPlayer(card));
-              }
-          }
+            System.out.println("Choose which characters will be controlled by players");
+            for (Card.CardName card : PLAYER_ORDER) {
+                if (getBooleanInput("Play as " + card + "?")) {
+                    humanPlayers.put(card, board.getPlayer(card));
+                }
+            }
 
-          if (humanPlayers.size() >= 3)
-              break;
+            if (humanPlayers.size() >= 3)
+                break;
 
-          System.out.println("Must have at least 3 players. Come back when you have more friends\n");
-      }
-  }
-  
-  public void playATurn(Player currentPlayer) {
+            System.out.println("Must have at least 3 players. Come back when you have more friends\n");
+        }
+    }
 
-      if (currentPlayer.isOut())
-          return;
+    public void playATurn(Player currentPlayer) {
 
-      if (currentPlayer.wasTeleported()) {
-          currentPlayer.setWasTeleported(false);
-          System.out.println("\n\nYou were moved to this room due to another player's suggestion");
-          if (getBooleanInput("Skip your move and make a suggestion about this room? (y/n): ")) {
-              makeSuggestion(currentPlayer);
-              return;
-          }
-      }
+        if (currentPlayer.isOut())
+            return;
 
-      // record player's starting cell (to check if it moves into a new room)
-      Cell startingCell = currentPlayer.getCell();
+        if (currentPlayer.wasTeleported()) {
+            currentPlayer.setWasTeleported(false);
+            System.out.println("\n\nYou were moved to this room due to another player's suggestion");
+            if (getBooleanInput("Skip your move and make a suggestion about this room? (y/n): ")) {
+                makeSuggestion(currentPlayer);
+                return;
+            }
+        }
 
-      board.printBoardAndNotebook(currentPlayer);
+        // record player's starting cell (to check if it moves into a new room)
+        Cell startingCell = currentPlayer.getCell();
 
-      System.out.println("\n");
-      int numMoves = rollDice();
+        board.printBoardAndNotebook(currentPlayer);
 
-      while (!moveAPlayer(currentPlayer, numMoves)){}
+        System.out.println("\n");
+        int numMoves = rollDice();
 
-      board.printBoardAndNotebook(currentPlayer);
+        while (!moveAPlayer(currentPlayer, numMoves)) {
+        }
 
-      // TODO: figure out if the player is in a new room
-      if (!currentPlayer.getCell().equals(startingCell))
-          makeSuggestion(currentPlayer);
-      //TODO: if nobody contests the suggestion, ask if they want to make an accusation
-      if (getBooleanInput("Make an accusation? ")) {
-    	  makeAccusation(currentPlayer);
-      }
-  }
+        board.printBoardAndNotebook(currentPlayer);
 
-  // TODO: this method
-  public void makeSuggestion(Player currentPlayer) {
-	  System.out.println("Make a Suggestion: ");
-	  
+        // TODO: figure out if the player is in a new room
+        if (!currentPlayer.getCell().equals(startingCell))
+            makeSuggestion(currentPlayer);
+        //TODO: if nobody contests the suggestion, ask if they want to make an accusation
+        if (getBooleanInput("Make an accusation? ")) {
+            makeAccusation(currentPlayer);
+        }
+    }
+
+    // TODO: this method
+    public void makeSuggestion(Player currentPlayer) {
+        System.out.println("Make a Suggestion: ");
+
 //      pick a weapon
-	  System.out.println("Select which weapon to use: ");
+        System.out.println("Select which weapon to use: ");
 //      pick a suspect
-	  System.out.println("Select which suspect to use: ");
+        System.out.println("Select which suspect to use: ");
 //
 //      if (weapon not in room)
-	  
+
 //      move weapon into room
 //      if (suspect not in room) {
 //          move suspect into room
@@ -161,262 +160,179 @@ public class Game
 //      if (no one refuted the suggestion && we want to make an accusation)
 //      makeAccusation();
 
-  }
+    }
 
-    // TODO: this method
     public void makeAccusation(Player currentPlayer) {
-    	System.out.println("Make an Accusation: ");
-    	
-    	for(Card c: envelope) {
-    		System.out.println(c.getName());
-    		
-    	}
-    	
-    	CardName suspect = checkSuspect();
-    	System.out.println("suspect: " + suspect.name());
-    	
-    	CardName room = checkRoom();
-    	System.out.println("room: " + room.name());
-    	CardName weapon = checkWeapon();
-    	System.out.println("weapon: " + weapon.name());
+        System.out.println("Make an Accusation: ");
 
-    	
-    	int correctCount=0;
-    	for(Card c: envelope) {
-    		
-    		if(c.getName().equals(suspect)){
-    			correctCount++;
-    		}
-    		else if(c.getName().equals(room)){
-    			correctCount++;
-    		}
-    		else if(c.getName().equals(weapon)) {
-    			correctCount++;
-    		}
-    	
-    	}
-    	if(correctCount==3) {
-    		// player wins! game is over
-    		System.out.println("Player " + currentPlayer + " wins!");
-    	}
-    	else {
-    		//player loses (they can't play any more)
-    		System.out.println("Wrong accusation " + currentPlayer + " is out of the game!");
-    	}
-    	
+        CardName suspectGuess = pickOption("Choose a suspect:", Card.CardType.PLAYER);
+        CardName weaponGuess = pickOption("Choose a weapon:", Card.CardType.WEAPON);
+        CardName roomGuess = pickOption("Choose a room:", Card.CardType.ROOM);
+
+        final CardName murderer = envelope.get(CardType.PLAYER).getName();
+        final CardName weapon = envelope.get(CardType.WEAPON).getName();
+        final CardName room = envelope.get(CardType.ROOM).getName();
+
+        if (suspectGuess.equals(murderer) && weaponGuess.equals(weapon) && roomGuess.equals(room)) {
+            System.out.println("Player " + currentPlayer + " wins!");
+            gameOver = true;
+        } else {
+            System.out.println("Wrong accusation " + currentPlayer + " is out of the game!");
+            currentPlayer.setOut();
+        }
     }
-    
-	public CardName checkSuspect() {
-		//pick a suspect
-		System.out.println("Select which suspect to use: ");
-		Scanner scanSuspect = new Scanner(System.in);
-		String suspect = scanSuspect.next();
-//		scanSuspect.close();commented out as it causes it to bug out
 
-		switch (suspect) {
-		case "CM":
-			return Card.CardName.COLONEL_MUSTARD;
-		case "PP":
-			return Card.CardName.PROFESSOR_PLUM;
-		case "RG":
-			return Card.CardName.REVEREND_GREEN;
-		case "MP":
-			return Card.CardName.MRS_PEACOCK;
-		case "MS":
-			return Card.CardName.MISS_SCARLET;
-		case "MW":
-			return Card.CardName.MRS_WHITE;
-		default:
-			System.out.println("No such character");
-			break;
-		}
-		return null;
+    public Card.CardName pickOption(String question, Card.CardType type) {
+        Card.CardName[] cards = Card.CardName.values(type);
 
-	}
-    public CardName checkRoom() {
-//      pick a room (any room)
-  	System.out.println("Select which room to use: ");
-    	Scanner scanRoom = new Scanner(System.in);
-    	String room = scanRoom.next();
-//    	scanRoom.close();commented out as it causes it to bug out
-    	
+        for (int i = 0; i < cards.length; i++)
+            System.out.printf("[%d] %s%n", i, cards[i]);
 
-    	switch (room) {
-		case "kitchen":
-			return Card.CardName.KITCHEN;
-		case "ballroom":
-			return Card.CardName.BALLROOM;
-		case "conservatory":
-			return Card.CardName.CONSERVATORY;
-		case "diningroom":
-			return Card.CardName.DINING_ROOM;
-		case "billiardroom":
-			return Card.CardName.BILLIARD_ROOM;
-		case "library":
-			return Card.CardName.LIBRARY;
-		case "Lounge":
-			return Card.CardName.LOUNGE;
-		case "hall":
-			return Card.CardName.HALL;
-		case "study":
-			return Card.CardName.STUDY;
-		default:
-			System.out.println("No such room");
-			break;
-		}
-		return null;
-	
-	}
-    public CardName checkWeapon() {
-//      pick a weapon
-    	System.out.println("Select which weapon to use: ");
-    	Scanner scanWeapon = new Scanner(System.in);
-    	String weapon = scanWeapon.next();
-    	//scanWeapon.close();commented out as it causes it to bug out
-    	
-    	switch (weapon) {
-		case "dagger":
-			return Card.CardName.DAGGER;
-		case "candlestick":
-			return Card.CardName.CANDLESTICK;
-		case "revolver":
-			return Card.CardName.REVOLVER;
-		case "rope":
-			return Card.CardName.ROPE;
-		case "leadpipe":
-			return Card.CardName.LEAD_PIPE;
-		case "spanner":
-			return Card.CardName.SPANNER;
-		default:
-			System.out.println("No such weapon");
-			break;
-		}
-		return null;
-	}
-  
-  public int rollDice() {
-      Random random = new Random();
-      int d1 = 1 + random.nextInt(5);
-      int d2 = 1 + random.nextInt(5);
-	  System.out.println("You rolled a " + d1 + " and a " + d2);
-      return d1 + d2;
-  }
-
-  public boolean moveAPlayer(Player currentPlayer, int moveCount) {
-      //takes input for moves -- this looks so janky
-      System.out.println("Enter a sequence of moves: W, A, S, D, or 0 to not move: ");
-      Scanner reader = new Scanner(System.in);
-      String c = reader.next();
-
-      List<Cell> allCellsTraversed = new ArrayList<>();
-      // main move logic
-      for (int i = 0; i < c.length(); i++) {
-          allCellsTraversed.add(currentPlayer.getCell());
-          Cell newCell;
-          // catching ArrayIndexOutOfBoundExceptions to deal with edges of the board
-          try {
-              if (c.charAt(i) == 'W' || c.charAt(i) == 'w') {
-                  newCell = board.getCell(currentPlayer.getCell().getRow() - 1, currentPlayer.getCell().getCol());
-              } else if (c.charAt(i) == 'A' || c.charAt(i) == 'a') {
-                  newCell = board.getCell(currentPlayer.getCell().getRow(), currentPlayer.getCell().getCol() - 1);
-              } else if (c.charAt(i) == 'S' || c.charAt(i) == 's') {
-                  newCell = board.getCell(currentPlayer.getCell().getRow() + 1, currentPlayer.getCell().getCol());
-              } else if (c.charAt(i) == 'D' || c.charAt(i) == 'd') {
-                  newCell = board.getCell(currentPlayer.getCell().getRow() - 1, currentPlayer.getCell().getCol() + 1);
-              } else if (c.charAt(i) == '0') {
-                  System.out.println("You opted not to move");
-                  return true;  // don't need to continue checking if move is valid if there is no move 🤷
-              } else {
-                  System.out.println("Invalid string to move with. Can only use W, A, S, and D to move, or 0 for no-move.");
-                  return false;
-              }
-
-              if (isValidMove(currentPlayer.getCell(), newCell) && !allCellsTraversed.contains(newCell)) {
-                  currentPlayer.moveToCell(newCell);
-              } else {
-                  System.out.println("Invalid cell to move to.");
-                  return false;
-              }
-          } catch (ArrayIndexOutOfBoundsException plsnomoveoutofboard) {
-              System.out.println("Cannot move off the board.");
-              return false;
-          }
-      }
-      reader.close();
-      return true;  // if it gets here, we've successfully moved for a whole move.
-  }
-
-  public boolean isValidMove(Cell playerCell, Cell newCell) {
-      // helper method to get if a cell is valid or not
-      if (newCell.getClass() == EmptyCell.class) {
-          return false;
-      }
-
-      if (newCell.doesContainItem()) {
-          return false;
-      }
-
-      if (playerCell.getClass() == HallCell.class) {
-          if (newCell.getClass() == HallCell.class) {
-              return true;
-          } else return ((HallCell) playerCell).getIsEntrance() && ((RoomCell) newCell).getIsDoor();
-      } else if (playerCell.getClass() == RoomCell.class) {
-          if (newCell.getClass() == RoomCell.class) {
-              return true;
-          } else return ((RoomCell) playerCell).getIsDoor() && ((HallCell) newCell).getIsEntrance();
-      }
-
-      return false; // it shouldn't get here, but just in case
-  }
-
-  public boolean getBooleanInput(String question) {
-    while (true) {
-      System.out.print(question + " (y/n): ");
-      String input = inputScanner.next();
-      System.out.print("");
-      if (input.equalsIgnoreCase("Y")) {
-        return true;
-      }
-      if (input.equalsIgnoreCase("N")) {
-        return false;
-      }
-
-      System.out.println("Must answer Y or N");
+        return cards[getIntegerInput(question, cards.length)];
     }
-  }
 
-  /**
-   * Establish murder circumstances and deal cards to players
-   */
-  public void dealCards() {
-
-    Collections.shuffle(cards);
-
-    envelope = new HashSet<>();
-    Set<Card.CardType> typesNotInEnvelope = new HashSet<>(Set.of(Card.CardType.values()));
-    Iterator<Player> playerIterator = humanPlayers.values().iterator();
-
-    // start iterator at random position (random "dealer" so Miss Scarlet doesn't get all the cards :P)
-    for (int i=0; i<Math.random() * humanPlayers.size(); i++)
-        playerIterator.next();
-
-    for (Card card : cards) {
-      if (typesNotInEnvelope.contains(card.getName().getType())) {
-        envelope.add(card);
-        typesNotInEnvelope.remove(card.getName().getType());
-      } else {
-        if (!playerIterator.hasNext())
-          playerIterator = humanPlayers.values().iterator();
-        playerIterator.next().dealCard(card);
-      }
+    public int rollDice() {
+        Random random = new Random();
+        int d1 = 1 + random.nextInt(5);
+        int d2 = 1 + random.nextInt(5);
+        System.out.println("You rolled a " + d1 + " and a " + d2);
+        return d1 + d2;
     }
-  }
 
-  //------------------------
-  // INTERFACE
-  //------------------------
+    public boolean moveAPlayer(Player currentPlayer, int moveCount) {
+        //takes input for moves -- this looks so janky
+        System.out.println("Enter a sequence of moves: W, A, S, D, or 0 to not move: ");
+        Scanner reader = new Scanner(System.in);
+        String c = reader.next();
 
-  //Don't need below code yet, and it prevents compiling, so I commented it out - Elias
+        List<Cell> allCellsTraversed = new ArrayList<>();
+        // main move logic
+        for (int i = 0; i < c.length(); i++) {
+            allCellsTraversed.add(currentPlayer.getCell());
+            Cell newCell;
+            // catching ArrayIndexOutOfBoundExceptions to deal with edges of the board
+            try {
+                if (c.charAt(i) == 'W' || c.charAt(i) == 'w') {
+                    newCell = board.getCell(currentPlayer.getCell().getRow() - 1, currentPlayer.getCell().getCol());
+                } else if (c.charAt(i) == 'A' || c.charAt(i) == 'a') {
+                    newCell = board.getCell(currentPlayer.getCell().getRow(), currentPlayer.getCell().getCol() - 1);
+                } else if (c.charAt(i) == 'S' || c.charAt(i) == 's') {
+                    newCell = board.getCell(currentPlayer.getCell().getRow() + 1, currentPlayer.getCell().getCol());
+                } else if (c.charAt(i) == 'D' || c.charAt(i) == 'd') {
+                    newCell = board.getCell(currentPlayer.getCell().getRow() - 1, currentPlayer.getCell().getCol() + 1);
+                } else if (c.charAt(i) == '0') {
+                    System.out.println("You opted not to move");
+                    return true;  // don't need to continue checking if move is valid if there is no move 🤷
+                } else {
+                    System.out.println("Invalid string to move with. Can only use W, A, S, and D to move, or 0 for no-move.");
+                    return false;
+                }
+
+                if (isValidMove(currentPlayer.getCell(), newCell) && !allCellsTraversed.contains(newCell)) {
+                    currentPlayer.moveToCell(newCell);
+                } else {
+                    System.out.println("Invalid cell to move to.");
+                    return false;
+                }
+            } catch (ArrayIndexOutOfBoundsException plsnomoveoutofboard) {
+                System.out.println("Cannot move off the board.");
+                return false;
+            }
+        }
+        reader.close();
+        return true;  // if it gets here, we've successfully moved for a whole move.
+    }
+
+    public boolean isValidMove(Cell playerCell, Cell newCell) {
+        // helper method to get if a cell is valid or not
+        if (newCell.getClass() == EmptyCell.class) {
+            return false;
+        }
+
+        if (newCell.doesContainItem()) {
+            return false;
+        }
+
+        if (playerCell.getClass() == HallCell.class) {
+            if (newCell.getClass() == HallCell.class) {
+                return true;
+            } else return ((HallCell) playerCell).getIsEntrance() && ((RoomCell) newCell).getIsDoor();
+        } else if (playerCell.getClass() == RoomCell.class) {
+            if (newCell.getClass() == RoomCell.class) {
+                return true;
+            } else return ((RoomCell) playerCell).getIsDoor() && ((HallCell) newCell).getIsEntrance();
+        }
+
+        return false; // it shouldn't get here, but just in case
+    }
+
+    public boolean getBooleanInput(String question) {
+        while (true) {
+            System.out.print(question + " (y/n): ");
+            String input = inputScanner.next();
+            System.out.print("");
+            if (input.equalsIgnoreCase("Y")) {
+                return true;
+            }
+            if (input.equalsIgnoreCase("N")) {
+                return false;
+            }
+
+            System.out.println("Must answer Y or N");
+        }
+    }
+
+    public int getIntegerInput(String question, int upperBound) {
+        while (true) {
+            System.out.print(question + " (0-" + (upperBound - 1) + "): ");
+
+            try {
+                int input = inputScanner.nextInt();
+                System.out.print("");
+
+                if (input < upperBound)
+                    return input;
+
+            } catch (Exception e) {
+                inputScanner.next();    // clear it out of the scanner
+            }
+
+            System.out.println("Please enter a number from 0-" + (upperBound - 1));
+        }
+    }
+
+    /**
+     * Establish murder circumstances and deal cards to players
+     */
+    public void dealCards() {
+
+        Collections.shuffle(cards);
+
+        envelope = new HashMap<>();
+        Set<Card.CardType> typesNotInEnvelope = new HashSet<>(Set.of(Card.CardType.values()));
+        Iterator<Player> playerIterator = humanPlayers.values().iterator();
+
+        // start iterator at random position (random "dealer" so Miss Scarlet doesn't get all the cards :P)
+        for (int i = 0; i < Math.random() * humanPlayers.size(); i++)
+            playerIterator.next();
+
+        for (Card card : cards) {
+            if (typesNotInEnvelope.contains(card.getName().getType())) {
+                envelope.put(card.getName().getType(), card);
+                typesNotInEnvelope.remove(card.getName().getType());
+            } else {
+                if (!playerIterator.hasNext())
+                    playerIterator = humanPlayers.values().iterator();
+                playerIterator.next().dealCard(card);
+            }
+        }
+    }
+
+    //------------------------
+    // INTERFACE
+    //------------------------
+
+    //Don't need below code yet, and it prevents compiling, so I commented it out - Elias
 
 //  /* Code from template association_GetOne */
 //  public Board getBoard()
@@ -660,17 +576,17 @@ public class Game
 //  }
 
 
-  public static void main(String[] args) {
-    new Game();
-  }
+    public static void main(String[] args) {
+        new Game();
+    }
 
-public void removeCard(Card card) {
-	// TODO Auto-generated method stub
-	
-}
+    public void removeCard(Card card) {
+        // TODO Auto-generated method stub
 
-public void addCard(Card card) {
-	// TODO Auto-generated method stub
-	
-}
+    }
+
+    public void addCard(Card card) {
+        // TODO Auto-generated method stub
+
+    }
 }
