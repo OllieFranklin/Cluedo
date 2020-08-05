@@ -19,6 +19,8 @@ public class Cell
   private int row;
   private int col;
 
+  private boolean containsItem = false;
+
   //------------------------
   // CONSTRUCTOR
   //------------------------
@@ -35,6 +37,10 @@ public class Cell
   public int getCol() {
     return col;
   }
+
+  public boolean doesContainItem() { return containsItem; }
+
+  public void setContainsItem(boolean containsItem) { this.containsItem = containsItem; }
 
   //Below code also doesn't seem necessary, and prevented compiling. - Elias
 

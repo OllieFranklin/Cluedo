@@ -107,10 +107,9 @@ public class Game
               return;
           }
       }
-      
-     
 
-      // TODO: record the player's current cell (but I think Elias is working on that rn)
+      // record player's starting cell (to check if it moves into a new room)
+      Cell startingCell = currentPlayer.getCell();
 
       board.printBoardAndNotebook(currentPlayer);
 
@@ -122,7 +121,7 @@ public class Game
       board.printBoardAndNotebook(currentPlayer);
 
       // TODO: figure out if the player is in a new room
-      if (true /* player is in a new room */)
+      if (!currentPlayer.getCell().equals(startingCell))
           makeSuggestion(currentPlayer);
       //TODO: if nobody contests the suggestion, ask if they want to make an accusation
       if (getBooleanInput("Make an accusation? ")) {
@@ -316,10 +315,11 @@ public class Game
           moveList[i] = c.charAt(i);
           System.out.println(moveList[i]);//debug
       }
-      
+
+      List<Cell> allCellsTraversed = new ArrayList<>();
       // main move logic
       for (int i = 0; i < c.length(); i++) {
-
+          allCellsTraversed.add(currentPlayer.getCell());
           Cell newCell;
           // catching ArrayIndexOutOfBoundExceptions to deal with edges of the board
           try {
@@ -336,7 +336,7 @@ public class Game
                   return false;
               }
 
-              if (isValidMove(currentPlayer.getCell(), newCell)) {
+              if (isValidMove(currentPlayer.getCell(), newCell) && !allCellsTraversed.contains(newCell)) {
                   currentPlayer.moveToCell(newCell);
               } else {
                   System.out.println("Invalid cell to move to.");
@@ -354,6 +354,10 @@ public class Game
   public boolean isValidMove(Cell playerCell, Cell newCell) {
       // helper method to get if a cell is valid or not
       if (newCell.getClass() == EmptyCell.class) {
+          return false;
+      }
+
+      if (newCell.doesContainItem()) {
           return false;
       }
 

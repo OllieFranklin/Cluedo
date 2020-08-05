@@ -30,6 +30,7 @@ public class Item
     this.cell = cell;
     this.cardName = cardName;
     this.printString = printString;
+    this.cell.setContainsItem(true);
   }
 
   public String toString() {
@@ -44,7 +45,11 @@ public class Item
     return cardName;
   }
 
-  public void moveToCell(Cell cell) { this.cell = cell; }
+  public void moveToCell(Cell cell) {
+    this.cell.setContainsItem(false);
+    this.cell = cell;
+    cell.setContainsItem(true);
+  }
 
 //  public Item(Cell aCell, Board aBoard)
 //  {
