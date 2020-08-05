@@ -304,17 +304,9 @@ public class Game
 
   public boolean moveAPlayer(Player currentPlayer, int moveCount) {
       //takes input for moves -- this looks so janky
-      System.out.println("Enter a sequence of moves: W, A, S, D: ");
+      System.out.println("Enter a sequence of moves: W, A, S, D, or 0 to not move: ");
       Scanner reader = new Scanner(System.in);
       String c = reader.next();
-      
-
-      // can remove this at some point
-      char[] moveList = new char[moveCount];
-      for (int i = 0; i < c.length(); i++) {
-          moveList[i] = c.charAt(i);
-          System.out.println(moveList[i]);//debug
-      }
 
       List<Cell> allCellsTraversed = new ArrayList<>();
       // main move logic
@@ -331,8 +323,11 @@ public class Game
                   newCell = board.getCell(currentPlayer.getCell().getRow() + 1, currentPlayer.getCell().getCol());
               } else if (c.charAt(i) == 'D' || c.charAt(i) == 'd') {
                   newCell = board.getCell(currentPlayer.getCell().getRow() - 1, currentPlayer.getCell().getCol() + 1);
+              } else if (c.charAt(i) == '0') {
+                  System.out.println("You opted not to move");
+                  return true;  // don't need to continue checking if move is valid if there is no move 🤷
               } else {
-                  System.out.println("Invalid string to move with. Can only use W, A, S, and D to move.");
+                  System.out.println("Invalid string to move with. Can only use W, A, S, and D to move, or 0 for no-move.");
                   return false;
               }
 
