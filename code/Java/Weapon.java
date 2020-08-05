@@ -7,30 +7,29 @@ import java.util.HashSet;
 
 // line 33 "model.ump"
 // line 103 "model.ump"
-public class Weapon extends Item
-{
+public class Weapon extends Item {
 
-  //------------------------
-  // MEMBER VARIABLES
-  //------------------------
+    //------------------------
+    // MEMBER VARIABLES
+    //------------------------
 
-  //------------------------
-  // CONSTRUCTOR
-  //------------------------
+    //------------------------
+    // CONSTRUCTOR
+    //------------------------
 
-  public Weapon(Cell cell, Card.CardName cardName, String printString) {
-    super(cell, cardName, printString);
-  }
+    public Weapon(Cell cell, Card.CardName cardName, String printString) {
+        super(cell, cardName, printString);
+    }
 
-  public String toString() {
-    return super.toString();
-  }
+    public String toString() {
+        return super.toString();
+    }
 
-  //------------------------
-  // INTERFACE
-  //------------------------
+    //------------------------
+    // INTERFACE
+    //------------------------
 
-  //Prevented compilation - Elias
+    //Prevented compilation - Elias
 
 //  public void delete()
 //  {

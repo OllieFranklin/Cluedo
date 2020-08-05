@@ -8,26 +8,26 @@ import java.util.*;
 
 // line 2 "model.ump"
 // line 66 "model.ump"
-public class Board
-{
+public class Board {
 
-  //------------------------
-  // MEMBER VARIABLES
-  //------------------------
+    //------------------------
+    // MEMBER VARIABLES
+    //------------------------
 
-  public static String[] printedBoard;
+    public static String[] printedBoard;
 
-  //Board Associations
-  private Cell[][] cells;
-  private Map<Card.CardName, Player> players;
-  private Map<Card.CardName, Weapon> weapons;
-  private Game game;
+    //Board Associations
+    private Cell[][] cells;
+    private Map<Card.CardName, Player> players;
+    private Map<Card.CardName, Weapon> weapons;
+    private Map<Card.CardName, Set<RoomCell>> cellsPerRoom;
+    private Game game;
 
-  //------------------------
-  // CONSTRUCTOR
-  //------------------------
+    //------------------------
+    // CONSTRUCTOR
+    //------------------------
 
-  //----- I commented this out because I don't think we need it - Elias
+    //----- I commented this out because I don't think we need it - Elias
 
 //  public Board(Game aGame)
 //  {
@@ -47,160 +47,182 @@ public class Board
 //    game = new Game(this);
 //  }
 
-  //-----
+    //-----
 
-  public Board(File dataFile, File printedBoardFile) {
+    public Board(File dataFile, File printedBoardFile) {
 
-    // creates room objects and associates cell sets with them
+        // creates room objects and associates cell sets with them
+        initCells(dataFile, printedBoardFile);
 
-    initCells(dataFile, printedBoardFile);
+        players = new HashMap<>();
+        weapons = new HashMap<>();
 
-    players = new HashMap<>();
-    weapons = new HashMap<>();
+        // create player objects in their starting positions
+        players.put(Card.CardName.COLONEL_MUSTARD, new Player(cells[17][0], Card.CardName.COLONEL_MUSTARD, "CM"));
+        players.put(Card.CardName.PROFESSOR_PLUM, new Player(cells[19][23], Card.CardName.PROFESSOR_PLUM, "PP"));
+        players.put(Card.CardName.REVEREND_GREEN, new Player(cells[0][14], Card.CardName.REVEREND_GREEN, "RG"));
+        players.put(Card.CardName.MRS_PEACOCK, new Player(cells[6][23], Card.CardName.MRS_PEACOCK, "MP"));
+        players.put(Card.CardName.MISS_SCARLET, new Player(cells[24][7], Card.CardName.MISS_SCARLET, "MS"));
+        players.put(Card.CardName.MRS_WHITE, new Player(cells[0][9], Card.CardName.MRS_WHITE, "MW"));
 
-    // create player objects in their starting positions
-    players.put(Card.CardName.COLONEL_MUSTARD, new Player(cells[17][0], Card.CardName.COLONEL_MUSTARD, "CM"));
-    players.put(Card.CardName.PROFESSOR_PLUM, new Player(cells[19][23], Card.CardName.PROFESSOR_PLUM, "PP"));
-    players.put(Card.CardName.REVEREND_GREEN, new Player(cells[0][14], Card.CardName.REVEREND_GREEN, "RG"));
-    players.put(Card.CardName.MRS_PEACOCK, new Player(cells[6][23], Card.CardName.MRS_PEACOCK, "MP"));
-    players.put(Card.CardName.MISS_SCARLET, new Player(cells[24][7], Card.CardName.MISS_SCARLET, "MS"));
-    players.put(Card.CardName.MRS_WHITE, new Player(cells[0][9], Card.CardName.MRS_WHITE, "MW"));
+        // shuffles rooms so weapon placement is randomised each game
+        List<Card.CardName> unusedWeapons = new ArrayList<>(Arrays.asList(Card.CardName.values(Card.CardType.WEAPON)));
+        List<Card.CardName> shuffledRooms = new ArrayList<>(Arrays.asList(Card.CardName.values(Card.CardType.ROOM)));
+        Collections.shuffle(unusedWeapons);
+        Collections.shuffle(shuffledRooms);
 
-    // shuffles rooms so weapon placement is randomised each game
-    List<Card.CardName> unusedWeapons = new ArrayList<>(Arrays.asList(Card.CardName.values(Card.CardType.WEAPON)));
-    List<Card.CardName> shuffledRooms = new ArrayList<>(Arrays.asList(Card.CardName.values(Card.CardType.ROOM)));
-    Collections.shuffle(unusedWeapons);
-    Collections.shuffle(shuffledRooms);
+        // places weapons randomly in rooms
+        // TODO: THIS ALWAYS PLACES WEAPONS IN TOP-LEFT OF ROOM, COULD CHANGE TO BE MORE RANDOM?
+        // TODO: WEAPON PRINTSTRING CURRENTLY FIRST 2 LETTERS FOR EASE, COULD HAVE BETTER PRINTSTRINGS
+        for (Card.CardName room : shuffledRooms) {
+            if (unusedWeapons.isEmpty()) {
+                break;
+            } // stop placing weapons if they've all been placed
+            for (int row = 0; row < 25; row++) {
+                for (int col = 0; col < 24; col++) {
+                    Cell thisCell = cells[row][col];
+                    if (thisCell.getClass().equals(RoomCell.class) && ((RoomCell) thisCell).getRoom().equals(room)) {
+                        Card.CardName nextWeapon = unusedWeapons.remove(0);
+                        String printString = nextWeapon.name().substring(0, 2);
+                        weapons.put(nextWeapon, new Weapon(thisCell, nextWeapon, printString));
 
-    // places weapons randomly in rooms
-    // TODO: THIS ALWAYS PLACES WEAPONS IN TOP-LEFT OF ROOM, COULD CHANGE TO BE MORE RANDOM?
-    // TODO: WEAPON PRINTSTRING CURRENTLY FIRST 2 LETTERS FOR EASE, COULD HAVE BETTER PRINTSTRINGS
-    for (Card.CardName room : shuffledRooms) {
-      if (unusedWeapons.isEmpty()) { break; } // stop placing weapons if they've all been placed
-      for (int row = 0; row < 25; row++) {
-        for (int col = 0; col < 24; col++) {
-          Cell thisCell = cells[row][col];
-          if (thisCell.getClass().equals(RoomCell.class) && ((RoomCell) thisCell).getRoom().equals(room)) {
-            Card.CardName nextWeapon = unusedWeapons.remove(0);
-            String printString = nextWeapon.name().substring(0, 2);
-            weapons.put(nextWeapon, new Weapon(thisCell, nextWeapon, printString));
-
-            // Did this to break both loops, perhaps could be done better?
-            row = 25;
-            col = 24;
-          }
+                        // Did this to break both loops, perhaps could be done better?
+                        row = 25;
+                        col = 24;
+                    }
+                }
+            }
         }
-      }
+
     }
 
-  }
+    public void initCells(File dataFile, File printedBoardFile) {
+        try {
+            cellsPerRoom = new HashMap<>();
+            Scanner sc = new Scanner(dataFile);
+            cells = new Cell[25][24];
 
-  public void initCells(File dataFile, File printedBoardFile) {
-    try {
-      Scanner sc = new Scanner(dataFile);
-      cells = new Cell[25][24];
+            int row = 0;
 
-      int row = 0;
+            while (sc.hasNext()) {
+                int col = 0;
+                String line = sc.nextLine();
+                for (int i = 0; i < 48; i += 2) {
+                    char c1 = line.charAt(i);
+                    char c2 = line.charAt(i + 1);
+                    if (c1 == 'R' || c1 == 'D') {
+                        Card.CardName roomType = Card.CardName.values(Card.CardType.ROOM)[Character.getNumericValue(c2)];
+                        RoomCell roomCell = new RoomCell(this, row, col, c1 == 'D', roomType);
+                        cells[row][col] = roomCell;
 
-      while (sc.hasNext()) {
-        int col = 0;
-        String line = sc.nextLine();
-        for (int i = 0; i < 48; i += 2) {
-          char c1 = line.charAt(i);
-          char c2 = line.charAt(i + 1);
-          if (c1 == 'R' || c1 == 'D') {
-            Card.CardName roomType = Card.CardName.values(Card.CardType.ROOM)[Character.getNumericValue(c2)];
-            cells[row][col] = new RoomCell(this, row, col, c1 == 'D', roomType);
-          } else if (c1 == '░' || c1 == '▒') {
-            cells[row][col] = new HallCell(this, row, col, c1 == '▒');
-          } else {
-            cells[row][col] = new EmptyCell(this, row, col);
-          }
-          col++;
+                        // also add the RoomCell to our map of room names to room cells
+                        if (!cellsPerRoom.containsKey(roomType))
+                            cellsPerRoom.put(roomType, new HashSet<>());
+                        cellsPerRoom.get(roomType).add(roomCell);
+
+                    } else if (c1 == '░' || c1 == '▒') {
+                        cells[row][col] = new HallCell(this, row, col, c1 == '▒');
+                    } else {
+                        cells[row][col] = new EmptyCell(this, row, col);
+                    }
+                    col++;
+                }
+                row++;
+            }
+
+            sc = new Scanner(printedBoardFile);
+            printedBoard = new String[25];
+            row = 0;
+            while (sc.hasNext()) {
+                printedBoard[row++] = sc.nextLine();
+            }
+
+        } catch (FileNotFoundException e) {
+            System.out.println("No valid file found");
+            e.printStackTrace();
         }
-        row++;
-      }
-
-      sc = new Scanner(printedBoardFile);
-      printedBoard = new String[25];
-      row = 0;
-      while (sc.hasNext()) {
-        printedBoard[row++] = sc.nextLine();
-      }
-
-    } catch (FileNotFoundException e) {
-      System.out.println("No valid file found");
-      e.printStackTrace();
-    }
-  }
-
-  /**
-   * Print the board, and the notebook of a given player
-   * @param player The player whose notebook we're printing
-   */
-  public void printBoardAndNotebook(Player player) {
-
-    // construct a StringBuilder array from String literal array
-    StringBuilder[] output = new StringBuilder[printedBoard.length];
-    for (int i = 0; i < output.length; i++) {
-      output[i] = new StringBuilder(printedBoard[i]);
     }
 
-    // replace player/weapon cells with their Strings
-    try {
-      for (Weapon w : weapons.values())
-        replaceCell(w.getCell().getRow(), w.getCell().getCol(), w.toString(), output);
-      for (Player p : players.values())
-        replaceCell(p.getCell().getRow(), p.getCell().getCol(), p.toString(), output);
-    } catch (Exception e) {
-      e.printStackTrace();
-      return;
+    /**
+     * Print the board, and the notebook of a given player
+     *
+     * @param player The player whose notebook we're printing
+     */
+    public void printBoardAndNotebook(Player player) {
+
+        // construct a StringBuilder array from String literal array
+        StringBuilder[] output = new StringBuilder[printedBoard.length];
+        for (int i = 0; i < output.length; i++) {
+            output[i] = new StringBuilder(printedBoard[i]);
+        }
+
+        // replace player/weapon cells with their Strings
+        try {
+            for (Weapon w : weapons.values())
+                replaceCell(w.getCell().getRow(), w.getCell().getCol(), w.toString(), output);
+            for (Player p : players.values())
+                replaceCell(p.getCell().getRow(), p.getCell().getCol(), p.toString(), output);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        // fill in the player's notebook
+        final Card.CardName[] cardNames = Card.CardName.values();
+        int offset = 2;
+        for (int i = 0; i < cardNames.length; i++) {
+            output[i + offset].append(player.knowAboutCard(cardNames[i]) ? "X" : "?");
+
+            if (i != cardNames.length - 1 && cardNames[i].getType() != cardNames[i + 1].getType())
+                offset++;
+        }
+
+        System.out.println("\n\n" + "PLAYER: " + player.getCardName().toString().toUpperCase());
+
+        for (StringBuilder sb : output)
+            System.out.println(sb);
     }
 
-    // fill in the player's notebook
-    final Card.CardName[] cardNames = Card.CardName.values();
-    int offset = 2;
-    for (int i=0; i<cardNames.length; i++) {
-      output[i+offset].append(player.knowAboutCard(cardNames[i]) ? "X" : "?");
-
-      if (i != cardNames.length-1 && cardNames[i].getType() != cardNames[i+1].getType())
-        offset++;
+    /**
+     * Replace a given cell in the StringBuilder array with a new String
+     *
+     * @param row         The row to make the replacement
+     * @param col         The col index of the cell (NOT AN INDEX INTO THE STRING)
+     * @param replacement The String to replace (must be 2 characters long)
+     * @param text        The StringBuilder array to make the replacement on
+     * @throws Exception If the String is not 2 characters long
+     */
+    private static void replaceCell(int row, int col, String replacement, StringBuilder[] text) throws Exception {
+        if (replacement.length() != 2)
+            throw new Exception("Wrong sized replacement String");
+        text[row].replace(col * 2, col * 2 + replacement.length(), replacement);
     }
 
-    System.out.println("\n\n" + "PLAYER: " + player.getCardName().toString().toUpperCase());
+    public Cell getCell(int row, int col) {
+        return cells[row][col];
+    }
 
-    for (StringBuilder sb : output)
-      System.out.println(sb);
-  }
+    public boolean itemInRoom(Card.CardName itemName, Card.CardName roomName) {
 
-  /**
-   * Replace a given cell in the StringBuilder array with a new String
-   * @param row The row to make the replacement
-   * @param col The col index of the cell (NOT AN INDEX INTO THE STRING)
-   * @param replacement The String to replace (must be 2 characters long)
-   * @param text The StringBuilder array to make the replacement on
-   * @throws Exception If the String is not 2 characters long
-   */
-  private static void replaceCell(int row, int col, String replacement, StringBuilder[] text) throws Exception {
-    if (replacement.length() != 2)
-      throw new Exception("Wrong sized replacement String");
-    text[row].replace(col*2, col*2+replacement.length(), replacement);
-  }
+        if (itemName.getType() == Card.CardType.PLAYER)
+            return players.get(itemName).getRoomName() == roomName;
 
-  public Cell getCell(int row, int col) {
-    return cells[row][col];
-  }
+        if (itemName.getType() == Card.CardType.WEAPON)
+            return weapons.get(itemName).getRoomName() == roomName;
 
-  //------------------------
-  // INTERFACE
-  //------------------------
-  /* Code from template association_GetMany */
+        return false;
+    }
 
-  // I commented out all the below code because it seems useless - Elias
+    //------------------------
+    // INTERFACE
+    //------------------------
+    /* Code from template association_GetMany */
 
-  public Player getPlayer(Card.CardName cardName) {
-    return players.get(cardName);
-  }
+    // I commented out all the below code because it seems useless - Elias
+
+    public Player getPlayer(Card.CardName cardName) {
+        return players.get(cardName);
+    }
 
 //  public Cell getCell(int index)
 //  {

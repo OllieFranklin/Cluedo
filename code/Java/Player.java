@@ -7,69 +7,68 @@ import java.util.*;
 
 // line 26 "model.ump"
 // line 97 "model.ump"
-public class Player extends Item
-{
+public class Player extends Item {
 
-  //------------------------
-  // MEMBER VARIABLES
-  //------------------------
+    //------------------------
+    // MEMBER VARIABLES
+    //------------------------
 
-  //Player Associations
-  private Map<Card.CardName, Card> hand;         // the physical cards that the player holds
-  private Map<Card.CardName, Card> inferences;   // the cards that the player knows are not the murder circumstances
+    //Player Associations
+    private Map<Card.CardName, Card> hand;         // the physical cards that the player holds
+    private Map<Card.CardName, Card> inferences;   // the cards that the player knows are not the murder circumstances
 
-  private boolean isOut;          // player is out of the game if they've made an incorrect accusation
-  private boolean wasTeleported;  // player was teleported into their current room < 1 turn ago
+    private boolean isOut;          // player is out of the game if they've made an incorrect accusation
+    private boolean wasTeleported;  // player was teleported into their current room < 1 turn ago
 
-  //------------------------
-  // CONSTRUCTOR
-  //------------------------
+    //------------------------
+    // CONSTRUCTOR
+    //------------------------
 
-  public Player(Cell cell, Card.CardName cardName, String printString) {
-    super(cell, cardName, printString);
-    hand = new HashMap<>();
-    inferences = new HashMap<>();
-  }
+    public Player(Cell cell, Card.CardName cardName, String printString) {
+        super(cell, cardName, printString);
+        hand = new HashMap<>();
+        inferences = new HashMap<>();
+    }
 
-  //------------------------
-  // INTERFACE
-  //------------------------
+    //------------------------
+    // INTERFACE
+    //------------------------
 
-  // bruh I tried using the pre-written add card method and it's awful - Ollie
-  public void dealCard(Card card) {
-    hand.put(card.getName(), card);
-    inferences.put(card.getName(), card);
-  }
+    // bruh I tried using the pre-written add card method and it's awful - Ollie
+    public void dealCard(Card card) {
+        hand.put(card.getName(), card);
+        inferences.put(card.getName(), card);
+    }
 
-  public boolean holdsCard(Card.CardName cardName) {
-    return hand.containsKey(cardName);
-  }
+    public boolean holdsCard(Card.CardName cardName) {
+        return hand.containsKey(cardName);
+    }
 
-  public boolean knowAboutCard(Card.CardName cardName) {
-    return inferences.containsKey(cardName);
-  }
+    public boolean knowAboutCard(Card.CardName cardName) {
+        return inferences.containsKey(cardName);
+    }
 
-  public String toString() {
-    return super.toString();
-  }
+    public String toString() {
+        return super.toString();
+    }
 
-  public boolean isOut() {
-    return isOut;
-  }
+    public boolean isOut() {
+        return isOut;
+    }
 
-  public void setOut() {
-    isOut = true;
-  }
+    public void setOut() {
+        isOut = true;
+    }
 
-  public boolean wasTeleported() {
-    return wasTeleported;
-  }
+    public boolean wasTeleported() {
+        return wasTeleported;
+    }
 
-  public void setWasTeleported(boolean wasTeleported) {
-    this.wasTeleported = wasTeleported;
-  }
+    public void setWasTeleported(boolean wasTeleported) {
+        this.wasTeleported = wasTeleported;
+    }
 
-  //Prevented compilation - Elias
+    //Prevented compilation - Elias
 
 //  /* Code from template association_GetMany */
 //  public Card getCard(int index)

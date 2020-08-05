@@ -3,46 +3,48 @@ package Java;
 /*This code was generated using the UMPLE 1.30.0.5074.a43557235 modeling language!*/
 
 
-
 // line 8 "model.ump"
 // line 74 "model.ump"
-public class Cell
-{
+public class Cell {
 
-  //------------------------
-  // MEMBER VARIABLES
-  //------------------------
+    //------------------------
+    // MEMBER VARIABLES
+    //------------------------
 
-  //Cell Associations
-  private Board board;
+    //Cell Associations
+    private Board board;
 
-  private int row;
-  private int col;
+    private int row;
+    private int col;
 
-  private boolean containsItem = false;
+    private boolean containsItem = false;
 
-  //------------------------
-  // CONSTRUCTOR
-  //------------------------
+    //------------------------
+    // CONSTRUCTOR
+    //------------------------
 
-  public Cell(int row, int col) {
-    this.row = row;
-    this.col = col;
-  }
+    public Cell(int row, int col) {
+        this.row = row;
+        this.col = col;
+    }
 
-  public int getRow() {
-    return row;
-  }
+    public int getRow() {
+        return row;
+    }
 
-  public int getCol() {
-    return col;
-  }
+    public int getCol() {
+        return col;
+    }
 
-  public boolean doesContainItem() { return containsItem; }
+    public boolean doesContainItem() {
+        return containsItem;
+    }
 
-  public void setContainsItem(boolean containsItem) { this.containsItem = containsItem; }
+    public void setContainsItem(boolean containsItem) {
+        this.containsItem = containsItem;
+    }
 
-  //Below code also doesn't seem necessary, and prevented compiling. - Elias
+    //Below code also doesn't seem necessary, and prevented compiling. - Elias
 
 //  public Cell(Board aBoard)
 //  {
@@ -53,17 +55,16 @@ public class Cell
 //    }
 //  }
 
-  //------------------------
-  // INTERFACE
-  //------------------------
-  /* Code from template association_GetOne */
-  public Board getBoard()
-  {
-    return board;
-  }
-  /* Code from template association_SetOneToMany */
+    //------------------------
+    // INTERFACE
+    //------------------------
+    /* Code from template association_GetOne */
+    public Board getBoard() {
+        return board;
+    }
+    /* Code from template association_SetOneToMany */
 
-  //Below code prevented compilation, not all of it seems necessary too - Elias
+    //Below code prevented compilation, not all of it seems necessary too - Elias
 
 //  public boolean setBoard(Board aBoard)
 //  {

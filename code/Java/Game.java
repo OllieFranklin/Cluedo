@@ -119,47 +119,55 @@ public class Game {
 
         board.printBoardAndNotebook(currentPlayer);
 
-        // TODO: figure out if the player is in a new room
-        if (!currentPlayer.getCell().equals(startingCell))
+        if (currentPlayer.getCell() != startingCell)
             makeSuggestion(currentPlayer);
-        //TODO: if nobody contests the suggestion, ask if they want to make an accusation
-        if (getBooleanInput("Make an accusation? ")) {
-            makeAccusation(currentPlayer);
-        }
     }
 
     // TODO: this method
     public void makeSuggestion(Player currentPlayer) {
+
+        // sanity check, although this shouldn't happen
+        if (currentPlayer.getRoomName() == null)
+            return;
+
         System.out.println("Make a Suggestion: ");
 
-//      pick a weapon
-        System.out.println("Select which weapon to use: ");
-//      pick a suspect
-        System.out.println("Select which suspect to use: ");
-//
-//      if (weapon not in room)
+        CardName suspectGuess = pickOption("Choose a suspect:", Card.CardType.PLAYER);
+        CardName weaponGuess = pickOption("Choose a weapon:", Card.CardType.WEAPON);
+        CardName roomGuess = currentPlayer.getRoomName();
 
-//      move weapon into room
-//      if (suspect not in room) {
-//          move suspect into room
-//          suspect.justTeleported = true
-//      }
-//
-//      for (each player clockwise of current player) {
-//          if (player has 1 of the cards) {
+        if (!board.itemInRoom(suspectGuess, roomGuess)) {
+            // todo: then move the suspect into this room
+        }
+
+        if (!board.itemInRoom(weaponGuess, roomGuess)) {
+            // todo: then move the weapon into this room
+            board.getPlayer(suspectGuess).setWasTeleported(true);
+        }
+
+        boolean someoneRefuted = false;
+        Iterator<Player> playerIterator = humanPlayers.values().iterator();
+        while(playerIterator.next() != currentPlayer){}     // start iterator at currentPlayer
+
+        // for clockwise players
+        for (int i=0; i < humanPlayers.size()-1 && !someoneRefuted; i++) {
+            if (!playerIterator.hasNext())
+                playerIterator = humanPlayers.values().iterator();
+
+            Player player = playerIterator.next();
+//            if (player has 1 of the cards) {
+//              someoneRefuted = true;
 //              don't need to ask them anything
 //              add the information to our notebook
-//              break
 //          } else if (player has >1 of the cards) {
+//              someoneRefuted = true;
 //              ask them which card they want to show
 //              add the information to our notebook
-//              break
 //          }
-//      }
-//
-//      if (no one refuted the suggestion && we want to make an accusation)
-//      makeAccusation();
+        }
 
+      if (!someoneRefuted && getBooleanInput("No one could refute your suggestion. Make an accusation?"))
+         makeAccusation(currentPlayer);
     }
 
     public void makeAccusation(Player currentPlayer) {

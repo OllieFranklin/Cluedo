@@ -3,48 +3,43 @@ package Java;
 /*This code was generated using the UMPLE 1.30.0.5074.a43557235 modeling language!*/
 
 
-
 // line 11 "model.ump"
 // line 80 "model.ump"
-public class HallCell extends Cell
-{
+public class HallCell extends Cell {
 
-  //------------------------
-  // MEMBER VARIABLES
-  //------------------------
+    //------------------------
+    // MEMBER VARIABLES
+    //------------------------
 
-  //HallCell Attributes
-  private boolean isEntrance;
+    //HallCell Attributes
+    private boolean isEntrance;
 
-  //------------------------
-  // CONSTRUCTOR
-  //------------------------
+    //------------------------
+    // CONSTRUCTOR
+    //------------------------
 
-  public HallCell(Board aBoard, int row, int col, boolean aIsEntrance)
-  {
-    super(row, col);
-    isEntrance = aIsEntrance;
-  }
+    public HallCell(Board aBoard, int row, int col, boolean aIsEntrance) {
+        super(row, col);
+        isEntrance = aIsEntrance;
+    }
 
-  //------------------------
-  // INTERFACE
-  //------------------------
+    //------------------------
+    // INTERFACE
+    //------------------------
 
-  public boolean setIsEntrance(boolean aIsEntrance)
-  {
-    boolean wasSet = false;
-    isEntrance = aIsEntrance;
-    wasSet = true;
-    return wasSet;
-  }
+    public boolean setIsEntrance(boolean aIsEntrance) {
+        boolean wasSet = false;
+        isEntrance = aIsEntrance;
+        wasSet = true;
+        return wasSet;
+    }
 
-  public boolean getIsEntrance()
-  {
-    return isEntrance;
-  }
-  /* Code from template attribute_IsBoolean */
+    public boolean getIsEntrance() {
+        return isEntrance;
+    }
+    /* Code from template attribute_IsBoolean */
 
-  //Prevented compilation - Elias
+    //Prevented compilation - Elias
 
 //  public void delete()
 //  {
@@ -52,9 +47,8 @@ public class HallCell extends Cell
 //  }
 
 
-  public String toString()
-  {
-    return super.toString() + "["+
-            "isEntrance" + ":" + getIsEntrance()+ "]";
-  }
+    public String toString() {
+        return super.toString() + "[" +
+                "isEntrance" + ":" + getIsEntrance() + "]";
+    }
 }

@@ -3,53 +3,64 @@ package Java;
 /*This code was generated using the UMPLE 1.30.0.5074.a43557235 modeling language!*/
 
 
-
 // line 22 "model.ump"
 // line 90 "model.ump"
-public class Item
-{
+public class Item {
 
-  //------------------------
-  // MEMBER VARIABLES
-  //------------------------
+    //------------------------
+    // MEMBER VARIABLES
+    //------------------------
 
-  //Item Associations
-  private Cell cell;
-  private Card.CardName cardName;
-  private String printString;
+    //Item Associations
+    private Cell cell;
+    private Card.CardName cardName;
+    private String printString;
 
-  private Board board;
+    private Board board;
 
-  //------------------------
-  // CONSTRUCTOR
-  //------------------------
+    //------------------------
+    // CONSTRUCTOR
+    //------------------------
 
-  //This constructor doesn't seem necessary, commented it out - Elias
+    //This constructor doesn't seem necessary, commented it out - Elias
 
-  public Item(Cell cell, Card.CardName cardName, String printString) {
-    this.cell = cell;
-    this.cardName = cardName;
-    this.printString = printString;
-    this.cell.setContainsItem(true);
-  }
+    public Item(Cell cell, Card.CardName cardName, String printString) {
+        this.cell = cell;
+        this.cardName = cardName;
+        this.printString = printString;
+        this.cell.setContainsItem(true);
+    }
 
-  public String toString() {
-    return printString;
-  }
+    public String toString() {
+        return printString;
+    }
 
-  public Cell getCell() {
-    return cell;
-  }
+    public Cell getCell() {
+        return cell;
+    }
 
-  public Card.CardName getCardName() {
-    return cardName;
-  }
+    public Card.CardName getCardName() {
+        return cardName;
+    }
 
-  public void moveToCell(Cell cell) {
-    this.cell.setContainsItem(false);
-    this.cell = cell;
-    cell.setContainsItem(true);
-  }
+    public void moveToCell(Cell cell) {
+        this.cell.setContainsItem(false);
+        this.cell = cell;
+        cell.setContainsItem(true);
+    }
+
+    /**
+     * Get the CardName of the room the item is currently in
+     * If the item is not in room (i.e. it is in a hall) return null
+     *
+     * @return The CardName of the room
+     */
+    public Card.CardName getRoomName() {
+        if (cell.getClass() == RoomCell.class) {
+            return ((RoomCell) cell).getRoom();
+        }
+        return null;
+    }
 
 //  public Item(Cell aCell, Board aBoard)
 //  {
@@ -64,11 +75,11 @@ public class Item
 //    }
 //  }
 
-  //------------------------
-  // INTERFACE
-  //------------------------
+    //------------------------
+    // INTERFACE
+    //------------------------
 
-  //Prevented compilation - Elias
+    //Prevented compilation - Elias
 
 //  /* Code from template association_GetOne */
 //  public Cell getCell()
