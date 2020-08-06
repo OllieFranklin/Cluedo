@@ -19,10 +19,6 @@ public class Player extends Item {
     private List<Card> hand;
     private List<Card> notepad;
 
-    // TODO: REMEMBER THAT THIS IS WHAT IT USED TO BE (& delete when stuff works)
-//    private Map<Card.CardName, Card> hand;         // the physical cards that the player holds
-//    private Map<Card.CardName, Card> notepad;   // the cards that the player knows are not the murder circumstances
-
     private boolean isOut;          // player is out of the game if they've made an incorrect accusation
     private boolean wasTeleported;  // player was teleported into their current room < 1 turn ago
 
@@ -36,9 +32,6 @@ public class Player extends Item {
         hand = new ArrayList<>();
         notepad = new ArrayList<>();
 
-        //TODO: REMEMBER THIS
-//        hand = new HashMap<>();
-//        notepad = new HashMap<>();
     }
 
     //------------------------
@@ -51,9 +44,6 @@ public class Player extends Item {
         hand.add(card);
         notepad.add(card);
 
-        //TODO: THIS TOO
-//        hand.put(card.getName(), card);
-//        notepad.put(card.getName(), card);
     }
 
     public boolean holdsCard(Card cardName) {

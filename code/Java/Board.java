@@ -75,7 +75,7 @@ public class Board {
 
         // places weapons randomly in rooms
         // TODO: THIS ALWAYS PLACES WEAPONS IN TOP-LEFT OF ROOM, COULD CHANGE TO BE MORE RANDOM?
-        // TODO: WEAPON PRINTSTRING CURRENTLY FIRST 2 LETTERS FOR EASE, COULD HAVE BETTER PRINTSTRINGS
+        //  WEAPON PRINTSTRING CURRENTLY FIRST 2 LETTERS FOR EASE, COULD HAVE BETTER PRINTSTRINGS
         for (RoomCard room : shuffledRooms) {
             if (unusedWeapons.isEmpty()) {
                 break;
@@ -180,13 +180,16 @@ public class Board {
             return;
         }
 
-        // fill in the player's notebook
-        // TODO: This bit is less efficient than OG. 4 lines vs 1 (though maybe could be 1 very yucky line?)
-        final Card[] cardNames = new Card[21];      // 9 rooms + 6 weapons + 6 players = 21 total cards
-
+        // TODO: Look at this. It's an ugly line
+        //  I wanted this, but couldn't get it to work even with weird casting:
+        //  new ArrayList<Card>(Arrays.asList(PlayerCard.values())).addAll(Arrays.asList(WeaponCard.values()).addAll(Arrays.asList(RoomCard.values())))
+        //  so I settled with a 2-line solution. Magic it better please
+        List<Card> cardNames = new ArrayList<Card>(Arrays.asList(PlayerCard.values()));
+        cardNames.addAll(Arrays.asList(WeaponCard.values()));
+        cardNames.addAll(Arrays.asList(RoomCard.values()));
         int offset = 2;
-        for (int i = 0; i < cardNames.length; i++) {
-            output[i + offset].append(player.knowAboutCard(cardNames[i]) ? "X" : "?");
+        for (int i = 0; i < cardNames.size(); i++) {
+            output[i + offset].append(player.knowAboutCard(cardNames.get(i)) ? "X" : "?");
 
             // TODO: Ollie I know what this does now but not entirely sure why it does it. Pls fix, I'm too tired. -Elias
 //            if (i != cardNames.length - 1 && cardNames[i].getType() != cardNames[i + 1].getType())
