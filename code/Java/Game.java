@@ -3,24 +3,23 @@ package Java;
 /*This code was generated using the UMPLE 1.30.0.5074.a43557235 modeling language!*/
 
 
+import Java.Card.*;
+
 import java.io.File;
 import java.util.*;
 import java.util.Scanner;
-
-import Java.Card.CardName;
-import Java.Card.CardType;
 
 // line 48 "model.ump"
 // line 120 "model.ump"
 public class Game {
 
-    public static Card.CardName[] PLAYER_ORDER = {
-            Card.CardName.MISS_SCARLET,
-            Card.CardName.COLONEL_MUSTARD,
-            Card.CardName.MRS_WHITE,
-            Card.CardName.REVEREND_GREEN,
-            Card.CardName.MRS_PEACOCK,
-            Card.CardName.PROFESSOR_PLUM
+    public static PlayerCard[] PLAYER_ORDER = {
+            PlayerCard.MISS_SCARLET,
+            PlayerCard.COLONEL_MUSTARD,
+            PlayerCard.MRS_WHITE,
+            PlayerCard.REVEREND_GREEN,
+            PlayerCard.MRS_PEACOCK,
+            PlayerCard.PROFESSOR_PLUM
     };
 
     //------------------------
@@ -30,8 +29,12 @@ public class Game {
     //Game Associations
     private Board board;
     private final List<Card> cards;
-    private Map<Card.CardName, Player> humanPlayers;
-    private Map<Card.CardType, Card> envelope;
+    private Map<PlayerCard, Player> humanPlayers;
+
+    // the murder circumstances
+    PlayerCard murderer;
+    WeaponCard murderWeapon;
+    RoomCard crimeScene;
 
     private final Scanner inputScanner;   // for getting user input
     private boolean gameOver = false;
@@ -58,8 +61,9 @@ public class Game {
 
         board = new Board(new File("data/cell-data.txt"), new File("data/printed-board.txt"));
         cards = new ArrayList<>();
-        for (Card.CardName name : Card.CardName.values())
-            cards.add(new Card(name));
+        cards.addAll(Arrays.asList(PlayerCard.values()));
+        cards.addAll(Arrays.asList(PlayerCard.values()));
+        cards.addAll(Arrays.asList(PlayerCard.values()));
 
         System.out.println("Welcome to Cluedo!");
         initHumanPlayers();
@@ -79,7 +83,7 @@ public class Game {
             humanPlayers = new LinkedHashMap<>();
 
             System.out.println("Choose which characters will be controlled by players");
-            for (Card.CardName card : PLAYER_ORDER) {
+            for (PlayerCard card : PLAYER_ORDER) {
                 if (getBooleanInput("Play as " + card + "?")) {
                     humanPlayers.put(card, board.getPlayer(card));
                 }
@@ -132,54 +136,63 @@ public class Game {
 
         System.out.println("Make a Suggestion: ");
 
-        CardName suspectGuess = pickOption("Choose a suspect:", Card.CardType.PLAYER);
-        CardName weaponGuess = pickOption("Choose a weapon:", Card.CardType.WEAPON);
-        CardName roomGuess = currentPlayer.getRoomName();
+        Card suspectGuess = pickOption("Choose a suspect:", PlayerCard.values());
+        Card weaponGuess = pickOption("Choose a weapon:", WeaponCard.values());
+        Card roomGuess = currentPlayer.getRoomName();
+        Set<Card> suggestionCards = new HashSet<>(Arrays.asList(suspectGuess, weaponGuess, roomGuess));
 
+        // move the suspect into the room if they're not already there
         if (!board.itemInRoom(suspectGuess, roomGuess)) {
-            // todo: then move the suspect into this room
+            board.moveItemToRoom(suspectGuess, roomGuess);
+            board.getPlayer(suspectGuess).setWasTeleported(true);
         }
 
+        // move the weapon into the room if it's not already there
         if (!board.itemInRoom(weaponGuess, roomGuess)) {
-            // todo: then move the weapon into this room
-            board.getPlayer(suspectGuess).setWasTeleported(true);
+            board.moveItemToRoom(weaponGuess, roomGuess);
         }
 
         boolean someoneRefuted = false;
         Iterator<Player> playerIterator = humanPlayers.values().iterator();
-        while(playerIterator.next() != currentPlayer){}     // start iterator at currentPlayer
+        while (playerIterator.next() != currentPlayer) {
+        }     // start iterator at currentPlayer
 
         // for clockwise players
-        for (int i=0; i < humanPlayers.size()-1 && !someoneRefuted; i++) {
+        for (int i = 0; i < humanPlayers.size() - 1 && !someoneRefuted; i++) {
             if (!playerIterator.hasNext())
                 playerIterator = humanPlayers.values().iterator();
 
             Player player = playerIterator.next();
-//            if (player has 1 of the cards) {
-//              someoneRefuted = true;
-//              don't need to ask them anything
+            Set<Card> cardsThePlayerHas = new HashSet<>(suggestionCards);
+            for (Card cardName : suggestionCards)
+                if (!player.holdsCard(cardName))
+                    cardsThePlayerHas.remove(cardName);
+
+            if (cardsThePlayerHas.size() == 1) {
+                someoneRefuted = true;
+                player.addToNotepad(cards.get(cardsThePlayerHas.iterator().next()));
 //              add the information to our notebook
-//          } else if (player has >1 of the cards) {
-//              someoneRefuted = true;
+            } else if (cardsThePlayerHas.size() > 1) {
+                someoneRefuted = true;
 //              ask them which card they want to show
 //              add the information to our notebook
-//          }
+            }
         }
 
-      if (!someoneRefuted && getBooleanInput("No one could refute your suggestion. Make an accusation?"))
-         makeAccusation(currentPlayer);
+        if (!someoneRefuted && getBooleanInput("No one could refute your suggestion. Make an accusation?"))
+            makeAccusation(currentPlayer);
     }
 
     public void makeAccusation(Player currentPlayer) {
         System.out.println("Make an Accusation: ");
 
-        CardName suspectGuess = pickOption("Choose a suspect:", Card.CardType.PLAYER);
-        CardName weaponGuess = pickOption("Choose a weapon:", Card.CardType.WEAPON);
-        CardName roomGuess = pickOption("Choose a room:", Card.CardType.ROOM);
+        Card suspectGuess = pickOption("Choose a suspect:", PlayerCard.values());
+        Card weaponGuess = pickOption("Choose a weapon:", WeaponCard.values());
+        Card roomGuess = pickOption("Choose a room:", RoomCard.values());
 
-        final CardName murderer = envelope.get(CardType.PLAYER).getName();
-        final CardName weapon = envelope.get(CardType.WEAPON).getName();
-        final CardName room = envelope.get(CardType.ROOM).getName();
+        final Card murderer = envelope.get(CardType.PLAYER).getName();
+        final Card weapon = envelope.get(CardType.WEAPON).getName();
+        final Card room = envelope.get(CardType.ROOM).getName();
 
         if (suspectGuess.equals(murderer) && weaponGuess.equals(weapon) && roomGuess.equals(room)) {
             System.out.println("Player " + currentPlayer + " wins!");
@@ -190,8 +203,7 @@ public class Game {
         }
     }
 
-    public Card.CardName pickOption(String question, Card.CardType type) {
-        Card.CardName[] cards = Card.CardName.values(type);
+    public Card pickOption(String question, Card[] cards) {
 
         for (int i = 0; i < cards.length; i++)
             System.out.printf("[%d] %s%n", i, cards[i]);

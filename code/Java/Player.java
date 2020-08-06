@@ -15,7 +15,7 @@ public class Player extends Item {
 
     //Player Associations
     private Map<Card.CardName, Card> hand;         // the physical cards that the player holds
-    private Map<Card.CardName, Card> inferences;   // the cards that the player knows are not the murder circumstances
+    private Map<Card.CardName, Card> notepad;   // the cards that the player knows are not the murder circumstances
 
     private boolean isOut;          // player is out of the game if they've made an incorrect accusation
     private boolean wasTeleported;  // player was teleported into their current room < 1 turn ago
@@ -27,7 +27,7 @@ public class Player extends Item {
     public Player(Cell cell, Card.CardName cardName, String printString) {
         super(cell, cardName, printString);
         hand = new HashMap<>();
-        inferences = new HashMap<>();
+        notepad = new HashMap<>();
     }
 
     //------------------------
@@ -37,7 +37,7 @@ public class Player extends Item {
     // bruh I tried using the pre-written add card method and it's awful - Ollie
     public void dealCard(Card card) {
         hand.put(card.getName(), card);
-        inferences.put(card.getName(), card);
+        notepad.put(card.getName(), card);
     }
 
     public boolean holdsCard(Card.CardName cardName) {
@@ -45,7 +45,11 @@ public class Player extends Item {
     }
 
     public boolean knowAboutCard(Card.CardName cardName) {
-        return inferences.containsKey(cardName);
+        return notepad.containsKey(cardName);
+    }
+
+    public void addToNotepad(Card card) {
+        notepad.put(card.getName(), card);
     }
 
     public String toString() {

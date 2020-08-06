@@ -18,8 +18,8 @@ public class Board {
 
     //Board Associations
     private Cell[][] cells;
-    private Map<Card.CardName, Player> players;
-    private Map<Card.CardName, Weapon> weapons;
+    private Map<Card.CardName, Item> items;
+//    private Map<Card.CardName, Weapon> weapons;
     private Map<Card.CardName, Set<RoomCell>> cellsPerRoom;
     private Game game;
 
@@ -54,16 +54,16 @@ public class Board {
         // creates room objects and associates cell sets with them
         initCells(dataFile, printedBoardFile);
 
-        players = new HashMap<>();
-        weapons = new HashMap<>();
+        items = new HashMap<>();
+//        weapons = new HashMap<>();
 
         // create player objects in their starting positions
-        players.put(Card.CardName.COLONEL_MUSTARD, new Player(cells[17][0], Card.CardName.COLONEL_MUSTARD, "CM"));
-        players.put(Card.CardName.PROFESSOR_PLUM, new Player(cells[19][23], Card.CardName.PROFESSOR_PLUM, "PP"));
-        players.put(Card.CardName.REVEREND_GREEN, new Player(cells[0][14], Card.CardName.REVEREND_GREEN, "RG"));
-        players.put(Card.CardName.MRS_PEACOCK, new Player(cells[6][23], Card.CardName.MRS_PEACOCK, "MP"));
-        players.put(Card.CardName.MISS_SCARLET, new Player(cells[24][7], Card.CardName.MISS_SCARLET, "MS"));
-        players.put(Card.CardName.MRS_WHITE, new Player(cells[0][9], Card.CardName.MRS_WHITE, "MW"));
+        items.put(Card.CardName.COLONEL_MUSTARD, new Player(cells[17][0], Card.CardName.COLONEL_MUSTARD, "CM"));
+        items.put(Card.CardName.PROFESSOR_PLUM, new Player(cells[19][23], Card.CardName.PROFESSOR_PLUM, "PP"));
+        items.put(Card.CardName.REVEREND_GREEN, new Player(cells[0][14], Card.CardName.REVEREND_GREEN, "RG"));
+        items.put(Card.CardName.MRS_PEACOCK, new Player(cells[6][23], Card.CardName.MRS_PEACOCK, "MP"));
+        items.put(Card.CardName.MISS_SCARLET, new Player(cells[24][7], Card.CardName.MISS_SCARLET, "MS"));
+        items.put(Card.CardName.MRS_WHITE, new Player(cells[0][9], Card.CardName.MRS_WHITE, "MW"));
 
         // shuffles rooms so weapon placement is randomised each game
         List<Card.CardName> unusedWeapons = new ArrayList<>(Arrays.asList(Card.CardName.values(Card.CardType.WEAPON)));
@@ -84,7 +84,7 @@ public class Board {
                     if (thisCell.getClass().equals(RoomCell.class) && ((RoomCell) thisCell).getRoom().equals(room)) {
                         Card.CardName nextWeapon = unusedWeapons.remove(0);
                         String printString = nextWeapon.name().substring(0, 2);
-                        weapons.put(nextWeapon, new Weapon(thisCell, nextWeapon, printString));
+                        items.put(nextWeapon, new Weapon(thisCell, nextWeapon, printString));
 
                         // Did this to break both loops, perhaps could be done better?
                         row = 25;
@@ -94,6 +94,19 @@ public class Board {
             }
         }
 
+    }
+
+    public void moveItemToRoom(Card.CardName itemName, Card.CardName roomName) {
+
+        if (roomName.getType() != Card.CardType.ROOM && itemName.getType() != Card.CardType.ROOM)
+            return;
+
+        for (RoomCell cell : cellsPerRoom.get(roomName)) {
+            if (!cell.doesContainItem()) {
+                items.get(itemName).moveToCell(cell);
+                break;
+            }
+        }
     }
 
     public void initCells(File dataFile, File printedBoardFile) {
@@ -117,7 +130,7 @@ public class Board {
 
                         // also add the RoomCell to our map of room names to room cells
                         if (!cellsPerRoom.containsKey(roomType))
-                            cellsPerRoom.put(roomType, new HashSet<>());
+                            cellsPerRoom.put(roomType, new LinkedHashSet<>());
                         cellsPerRoom.get(roomType).add(roomCell);
 
                     } else if (c1 == '░' || c1 == '▒') {
@@ -158,10 +171,8 @@ public class Board {
 
         // replace player/weapon cells with their Strings
         try {
-            for (Weapon w : weapons.values())
+            for (Item w : items.values())
                 replaceCell(w.getCell().getRow(), w.getCell().getCol(), w.toString(), output);
-            for (Player p : players.values())
-                replaceCell(p.getCell().getRow(), p.getCell().getCol(), p.toString(), output);
         } catch (Exception e) {
             e.printStackTrace();
             return;
@@ -203,14 +214,7 @@ public class Board {
     }
 
     public boolean itemInRoom(Card.CardName itemName, Card.CardName roomName) {
-
-        if (itemName.getType() == Card.CardType.PLAYER)
-            return players.get(itemName).getRoomName() == roomName;
-
-        if (itemName.getType() == Card.CardType.WEAPON)
-            return weapons.get(itemName).getRoomName() == roomName;
-
-        return false;
+        return items.get(itemName).getRoomName() == roomName;
     }
 
     //------------------------
@@ -221,7 +225,7 @@ public class Board {
     // I commented out all the below code because it seems useless - Elias
 
     public Player getPlayer(Card.CardName cardName) {
-        return players.get(cardName);
+        return (Player)items.get(cardName);
     }
 
 //  public Cell getCell(int index)
