@@ -1,10 +1,6 @@
 package Java;
 public interface Card {
 
-    enum Type {
-        PLAYER, WEAPON, ROOM;
-    }
-
     enum PlayerCard implements Card {
         COLONEL_MUSTARD("Colonel Mustard"),
         PROFESSOR_PLUM("Professor Plum"),

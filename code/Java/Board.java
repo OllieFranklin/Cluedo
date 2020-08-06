@@ -191,9 +191,8 @@ public class Board {
         for (int i = 0; i < cardNames.size(); i++) {
             output[i + offset].append(player.knowAboutCard(cardNames.get(i)) ? "X" : "?");
 
-            // TODO: Ollie I know what this does now but not entirely sure why it does it. Pls fix, I'm too tired. -Elias
-//            if (i != cardNames.length - 1 && cardNames[i].getType() != cardNames[i + 1].getType())
-//                offset++;
+            if (i != cardNames.size() - 1 && cardNames.get(i).getClass() != cardNames.get(i+1).getClass())
+                offset++;
         }
 
         System.out.println("\n\n" + "PLAYER: " + player.getCardName().toString().toUpperCase());
@@ -223,8 +222,9 @@ public class Board {
 
     public boolean itemInRoom(Card itemName, RoomCard roomName) {
         // TODO: Work out a way of checking that itemName aint a RoomCard without null return, or ditch the check
-        return itemName.getClass() == RoomCard.class ? (items.get(itemName).getRoomName() == roomName) : null;
 
+        // I think that does the above? returning false seems good, right? - Ollie
+        return itemName.getClass() == RoomCard.class && items.get(itemName).getRoomName() == roomName;
     }
 
     //------------------------
