@@ -188,7 +188,7 @@ public class Board {
         for (int i = 0; i < cardNames.length; i++) {
             output[i + offset].append(player.knowAboutCard(cardNames[i]) ? "X" : "?");
 
-            // TODO: I cannot for the life of me figure out what this actually did. Check later.
+            // TODO: Ollie I know what this does now but not entirely sure why it does it. Pls fix, I'm too tired. -Elias
 //            if (i != cardNames.length - 1 && cardNames[i].getType() != cardNames[i + 1].getType())
 //                offset++;
         }

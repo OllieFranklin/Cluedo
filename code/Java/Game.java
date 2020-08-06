@@ -176,6 +176,66 @@ public class Game {
                 someoneRefuted = true;
 //              ask them which card they want to show
 
+                // TODO: Using a Set for cardsThePlayerHas makes this weird. Either we take a string input of the name
+                //  and use that, or display the possible options with int values and take an int input, or get them to
+                //  use an int input based on the location it is in their displayed notebook. The first is a nuisance
+                //  for the player and a bit gross to implement, the second is the easiest for the player but the
+                //  grossest to implement with a set, and the third is kinda okay to implement but still not gr8 for the
+                //  player.     🤷 🤷 🤷 🤷 🤷
+                //  Need a second opinion on it, I've whipped up pseudocode for all, someone pick their poison.
+
+                //OPTION #1: STRING INPUT
+//                System.out.println(player.getCardName() + "Enter the card you want to offer: ");
+//                Scanner scanner = new Scanner(System.in);
+//                String givenCard = scanner.nextLine();      //double-check this pls, got it from google and didn't test
+//                Iterator<Card> cardIterator = cardsThePlayerHas.iterator();
+//                while (cardIterator.hasNext()) {
+//                    Card card = cardIterator.next();
+//                    if (card.getClass().getName().equalsIgnoreCase(givenCard)) {
+//                        currentPlayer.addToNotepad(card);
+//                        break;
+//                    } else if (!cardIterator.hasNext()) {
+//                        //something asking for another input bc they messed up their input. idk I'm tired.
+//                    }
+//                }
+
+                //OPTION #2: INT INPUT WITH GIVEN STUFF (I THINK THIS IS BEST NOW THAT I'VE WRITTEN IT - ELIAS)
+//                List<Card> cardsButWeCanAccessThemWithInts = new ArrayList<>(cardsThePlayerHas);
+//                //print out their options
+//                System.out.println("ALL THE CARDS YOU CAN CHOOSE FROM: ");
+//                for (int index = 0; index < cardsButWeCanAccessThemWithInts.size(); index++) {
+//                    System.out.println(index + ": " + cardsButWeCanAccessThemWithInts.get(index));
+//                }
+//
+//                //ask for their opinion ig, does their opinion really matter in the grand scheme of things???
+//                System.out.println(player.getCardName() + "Enter the card you want to offer: ");
+//                Scanner scanner = new Scanner(System.in);
+//                int givenCard = scanner.nextInt();      //double-check this pls, got it from google and didn't test
+//
+//                if (givenCard > cardsThePlayerHas.size()) {
+//                    //tell them they're bad and their input is wrong somehow, and give them another try like a baby
+//                } else {
+//                    //hooray they're right we can do it with one line of code
+//                    currentPlayer.addToNotepad(cardsButWeCanAccessThemWithInts.get(givenCard));
+//                }
+
+                //OPTION #3: INT INPUT BUT WE THROW THEM IN THE DEEP END AND GET THEM TO COUNT FOR THEMSELVES
+                //IT REALLY DO BE LIKE OPTION 2 BUT WE ASSUME THEY CAN COUNT IN ORDER
+                //also I just realised that I'm assuming cards is in order. Thus, its probably the worst option?
+
+//                //we care about their opinion ig
+//                System.out.println(player.getCardName() + "Enter the card you want to offer: ");
+//                Scanner scanner = new Scanner(System.in);
+//                int givenCard = scanner.nextInt();      //double-check this pls, got it from google and didn't test
+//
+//                if (givenCard > cards.size()) {
+//                    //tell them they're bad and their input is wrong somehow, and give them another try like a baby
+//                } else {
+//                    //hooray they're right we can do it with one line of code
+//                    currentPlayer.addToNotepad(cards.get(givenCard));
+//                }
+
+
 //              add the information to our notebook
             }
             //otherwise we're skipping this player
@@ -191,8 +251,6 @@ public class Game {
         Card suspectGuess = pickOption("Choose a suspect:", PlayerCard.values());
         Card weaponGuess = pickOption("Choose a weapon:", WeaponCard.values());
         Card roomGuess = pickOption("Choose a room:", RoomCard.values());
-
-
 
         if (suspectGuess.equals(murderer) && weaponGuess.equals(murderWeapon) && roomGuess.equals(crimeScene)) {
             System.out.println("Player " + currentPlayer + " wins!");
@@ -241,7 +299,6 @@ public class Game {
                 } else if (c.charAt(i) == 'D' || c.charAt(i) == 'd') {
                     newCell = board.getCell(currentPlayer.getCell().getRow() - 1, currentPlayer.getCell().getCol() + 1);
                 } else if (c.charAt(i) == '0') {
-                    System.out.println("You opted not to move");
                     return true;  // don't need to continue checking if move is valid if there is no move 🤷
                 } else {
                     System.out.println("Invalid string to move with. Can only use W, A, S, and D to move, or 0 for no-move.");
