@@ -1,4 +1,5 @@
 package Java;
+import Java.Card.WeaponCard;
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.30.0.5074.a43557235 modeling language!*/
 
@@ -17,7 +18,7 @@ public class Weapon extends Item {
     // CONSTRUCTOR
     //------------------------
 
-    public Weapon(Cell cell, Card.CardName cardName, String printString) {
+    public Weapon(Cell cell, WeaponCard cardName, String printString) {
         super(cell, cardName, printString);
     }
 

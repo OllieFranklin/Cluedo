@@ -32,9 +32,9 @@ public class Game {
     private Map<PlayerCard, Player> humanPlayers;
 
     // the murder circumstances
-    PlayerCard murderer;
-    WeaponCard murderWeapon;
-    RoomCard crimeScene;
+    PlayerCard murderer = null;
+    WeaponCard murderWeapon = null;
+    RoomCard crimeScene = null;
 
     private final Scanner inputScanner;   // for getting user input
     private boolean gameOver = false;
@@ -136,9 +136,9 @@ public class Game {
 
         System.out.println("Make a Suggestion: ");
 
-        Card suspectGuess = pickOption("Choose a suspect:", PlayerCard.values());
-        Card weaponGuess = pickOption("Choose a weapon:", WeaponCard.values());
-        Card roomGuess = currentPlayer.getRoomName();
+        PlayerCard suspectGuess = (PlayerCard) pickOption("Choose a suspect:", PlayerCard.values());
+        WeaponCard weaponGuess = (WeaponCard) pickOption("Choose a weapon:", WeaponCard.values());
+        RoomCard roomGuess = (RoomCard) currentPlayer.getRoomName();
         Set<Card> suggestionCards = new HashSet<>(Arrays.asList(suspectGuess, weaponGuess, roomGuess));
 
         // move the suspect into the room if they're not already there
@@ -170,13 +170,15 @@ public class Game {
 
             if (cardsThePlayerHas.size() == 1) {
                 someoneRefuted = true;
-                player.addToNotepad(cards.get(cardsThePlayerHas.iterator().next()));
+                currentPlayer.addToNotepad(cardsThePlayerHas.iterator().next());
 //              add the information to our notebook
             } else if (cardsThePlayerHas.size() > 1) {
                 someoneRefuted = true;
 //              ask them which card they want to show
+
 //              add the information to our notebook
             }
+            //otherwise we're skipping this player
         }
 
         if (!someoneRefuted && getBooleanInput("No one could refute your suggestion. Make an accusation?"))
@@ -190,11 +192,9 @@ public class Game {
         Card weaponGuess = pickOption("Choose a weapon:", WeaponCard.values());
         Card roomGuess = pickOption("Choose a room:", RoomCard.values());
 
-        final Card murderer = envelope.get(CardType.PLAYER).getName();
-        final Card weapon = envelope.get(CardType.WEAPON).getName();
-        final Card room = envelope.get(CardType.ROOM).getName();
 
-        if (suspectGuess.equals(murderer) && weaponGuess.equals(weapon) && roomGuess.equals(room)) {
+
+        if (suspectGuess.equals(murderer) && weaponGuess.equals(murderWeapon) && roomGuess.equals(crimeScene)) {
             System.out.println("Player " + currentPlayer + " wins!");
             gameOver = true;
         } else {
@@ -328,8 +328,6 @@ public class Game {
 
         Collections.shuffle(cards);
 
-        envelope = new HashMap<>();
-        Set<Card.CardType> typesNotInEnvelope = new HashSet<>(Set.of(Card.CardType.values()));
         Iterator<Player> playerIterator = humanPlayers.values().iterator();
 
         // start iterator at random position (random "dealer" so Miss Scarlet doesn't get all the cards :P)
@@ -337,14 +335,27 @@ public class Game {
             playerIterator.next();
 
         for (Card card : cards) {
-            if (typesNotInEnvelope.contains(card.getName().getType())) {
-                envelope.put(card.getName().getType(), card);
-                typesNotInEnvelope.remove(card.getName().getType());
+
+            if (card.getClass() == PlayerCard.class && murderer == null) {
+                murderer = (PlayerCard) card;
+            } else if (card.getClass() == WeaponCard.class && murderWeapon == null) {
+                murderWeapon = (WeaponCard) card;
+            } else if (card.getClass() == RoomCard.class && crimeScene == null) {
+                crimeScene = (RoomCard) card;
             } else {
                 if (!playerIterator.hasNext())
                     playerIterator = humanPlayers.values().iterator();
                 playerIterator.next().dealCard(card);
             }
+
+//            if (typesNotInEnvelope.contains(card.getName().getType())) {
+//                envelope.put(card.getName().getType(), card);
+//                typesNotInEnvelope.remove(card.getName().getType());
+//            } else {
+//                if (!playerIterator.hasNext())
+//                    playerIterator = humanPlayers.values().iterator();
+//                playerIterator.next().dealCard(card);
+//            }
         }
     }
 

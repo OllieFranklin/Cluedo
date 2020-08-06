@@ -2,6 +2,7 @@ package Java;
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.30.0.5074.a43557235 modeling language!*/
 
+import Java.Card.RoomCard;
 
 // line 16 "model.ump"
 // line 85 "model.ump"
@@ -19,13 +20,13 @@ public class RoomCell extends Cell {
 
     //RoomCell Attributes
     private boolean isDoor;
-    private Card.CardName room;
+    private RoomCard room;
 
     //------------------------
     // CONSTRUCTOR
     //------------------------
 
-    public RoomCell(Board aBoard, int row, int col, boolean aIsDoor, Card.CardName aRoom) {
+    public RoomCell(Board aBoard, int row, int col, boolean aIsDoor, RoomCard aRoom) {
         super(row, col);
         isDoor = aIsDoor;
         room = aRoom;
@@ -42,7 +43,7 @@ public class RoomCell extends Cell {
         return wasSet;
     }
 
-    public boolean setRoom(Card.CardName aRoom) {
+    public boolean setRoom(RoomCard aRoom) {
         boolean wasSet = false;
         room = aRoom;
         wasSet = true;
@@ -53,14 +54,13 @@ public class RoomCell extends Cell {
         return isDoor;
     }
 
-    public Card.CardName getRoom() {
+    public RoomCard getRoom() {
         return room;
     }
 
     /* Code from template attribute_IsBoolean */
-    public boolean isIsDoor() {
-        return isDoor;
-    }
+
+    // bruh it auto-generated isIsDoor and getIsDoor and they did the same thing. wtf.
 
     //Prevented compilation - Elias
 

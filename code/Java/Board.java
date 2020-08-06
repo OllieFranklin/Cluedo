@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
+import Java.Card.*;
+
 // line 2 "model.ump"
 // line 66 "model.ump"
 public class Board {
@@ -18,9 +20,9 @@ public class Board {
 
     //Board Associations
     private Cell[][] cells;
-    private Map<Card.CardName, Item> items;
+    private Map<Card, Item> items;
 //    private Map<Card.CardName, Weapon> weapons;
-    private Map<Card.CardName, Set<RoomCell>> cellsPerRoom;
+    private Map<RoomCard, Set<RoomCell>> cellsPerRoom;
     private Game game;
 
     //------------------------
@@ -58,23 +60,23 @@ public class Board {
 //        weapons = new HashMap<>();
 
         // create player objects in their starting positions
-        items.put(Card.CardName.COLONEL_MUSTARD, new Player(cells[17][0], Card.CardName.COLONEL_MUSTARD, "CM"));
-        items.put(Card.CardName.PROFESSOR_PLUM, new Player(cells[19][23], Card.CardName.PROFESSOR_PLUM, "PP"));
-        items.put(Card.CardName.REVEREND_GREEN, new Player(cells[0][14], Card.CardName.REVEREND_GREEN, "RG"));
-        items.put(Card.CardName.MRS_PEACOCK, new Player(cells[6][23], Card.CardName.MRS_PEACOCK, "MP"));
-        items.put(Card.CardName.MISS_SCARLET, new Player(cells[24][7], Card.CardName.MISS_SCARLET, "MS"));
-        items.put(Card.CardName.MRS_WHITE, new Player(cells[0][9], Card.CardName.MRS_WHITE, "MW"));
+        items.put(PlayerCard.COLONEL_MUSTARD, new Player(cells[17][0], PlayerCard.COLONEL_MUSTARD, "CM"));
+        items.put(PlayerCard.PROFESSOR_PLUM, new Player(cells[19][23], PlayerCard.PROFESSOR_PLUM, "PP"));
+        items.put(PlayerCard.REVEREND_GREEN, new Player(cells[0][14], PlayerCard.REVEREND_GREEN, "RG"));
+        items.put(PlayerCard.MRS_PEACOCK, new Player(cells[6][23], PlayerCard.MRS_PEACOCK, "MP"));
+        items.put(PlayerCard.MISS_SCARLET, new Player(cells[24][7], PlayerCard.MISS_SCARLET, "MS"));
+        items.put(PlayerCard.MRS_WHITE, new Player(cells[0][9], PlayerCard.MRS_WHITE, "MW"));
 
         // shuffles rooms so weapon placement is randomised each game
-        List<Card.CardName> unusedWeapons = new ArrayList<>(Arrays.asList(Card.CardName.values(Card.CardType.WEAPON)));
-        List<Card.CardName> shuffledRooms = new ArrayList<>(Arrays.asList(Card.CardName.values(Card.CardType.ROOM)));
+        List<WeaponCard> unusedWeapons = new ArrayList<>(Arrays.asList(WeaponCard.values()));
+        List<RoomCard> shuffledRooms = new ArrayList<>(Arrays.asList(RoomCard.values()));
         Collections.shuffle(unusedWeapons);
         Collections.shuffle(shuffledRooms);
 
         // places weapons randomly in rooms
         // TODO: THIS ALWAYS PLACES WEAPONS IN TOP-LEFT OF ROOM, COULD CHANGE TO BE MORE RANDOM?
         // TODO: WEAPON PRINTSTRING CURRENTLY FIRST 2 LETTERS FOR EASE, COULD HAVE BETTER PRINTSTRINGS
-        for (Card.CardName room : shuffledRooms) {
+        for (RoomCard room : shuffledRooms) {
             if (unusedWeapons.isEmpty()) {
                 break;
             } // stop placing weapons if they've all been placed
@@ -82,7 +84,7 @@ public class Board {
                 for (int col = 0; col < 24; col++) {
                     Cell thisCell = cells[row][col];
                     if (thisCell.getClass().equals(RoomCell.class) && ((RoomCell) thisCell).getRoom().equals(room)) {
-                        Card.CardName nextWeapon = unusedWeapons.remove(0);
+                        WeaponCard nextWeapon = unusedWeapons.remove(0);
                         String printString = nextWeapon.name().substring(0, 2);
                         items.put(nextWeapon, new Weapon(thisCell, nextWeapon, printString));
 
@@ -96,9 +98,9 @@ public class Board {
 
     }
 
-    public void moveItemToRoom(Card.CardName itemName, Card.CardName roomName) {
+    public void moveItemToRoom(Card itemName, RoomCard roomName) {
 
-        if (roomName.getType() != Card.CardType.ROOM && itemName.getType() != Card.CardType.ROOM)
+        if (itemName.getClass() == RoomCard.class)
             return;
 
         for (RoomCell cell : cellsPerRoom.get(roomName)) {
@@ -124,7 +126,7 @@ public class Board {
                     char c1 = line.charAt(i);
                     char c2 = line.charAt(i + 1);
                     if (c1 == 'R' || c1 == 'D') {
-                        Card.CardName roomType = Card.CardName.values(Card.CardType.ROOM)[Character.getNumericValue(c2)];
+                        RoomCard roomType = RoomCard.values()[Character.getNumericValue(c2)];
                         RoomCell roomCell = new RoomCell(this, row, col, c1 == 'D', roomType);
                         cells[row][col] = roomCell;
 
@@ -179,13 +181,16 @@ public class Board {
         }
 
         // fill in the player's notebook
-        final Card.CardName[] cardNames = Card.CardName.values();
+        // TODO: This bit is less efficient than OG. 4 lines vs 1 (though maybe could be 1 very yucky line?)
+        final Card[] cardNames = new Card[21];      // 9 rooms + 6 weapons + 6 players = 21 total cards
+
         int offset = 2;
         for (int i = 0; i < cardNames.length; i++) {
             output[i + offset].append(player.knowAboutCard(cardNames[i]) ? "X" : "?");
 
-            if (i != cardNames.length - 1 && cardNames[i].getType() != cardNames[i + 1].getType())
-                offset++;
+            // TODO: I cannot for the life of me figure out what this actually did. Check later.
+//            if (i != cardNames.length - 1 && cardNames[i].getType() != cardNames[i + 1].getType())
+//                offset++;
         }
 
         System.out.println("\n\n" + "PLAYER: " + player.getCardName().toString().toUpperCase());
@@ -213,8 +218,10 @@ public class Board {
         return cells[row][col];
     }
 
-    public boolean itemInRoom(Card.CardName itemName, Card.CardName roomName) {
-        return items.get(itemName).getRoomName() == roomName;
+    public boolean itemInRoom(Card itemName, RoomCard roomName) {
+        // TODO: Work out a way of checking that itemName aint a RoomCard without null return, or ditch the check
+        return itemName.getClass() == RoomCard.class ? (items.get(itemName).getRoomName() == roomName) : null;
+
     }
 
     //------------------------
@@ -224,7 +231,7 @@ public class Board {
 
     // I commented out all the below code because it seems useless - Elias
 
-    public Player getPlayer(Card.CardName cardName) {
+    public Player getPlayer(PlayerCard cardName) {
         return (Player)items.get(cardName);
     }
 
