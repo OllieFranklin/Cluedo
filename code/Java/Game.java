@@ -98,13 +98,16 @@ public class Game {
 
     public void playATurn(Player currentPlayer) {
 
+
         if (currentPlayer.isOut())
             return;
+
+        board.printBoardAndNotebook(currentPlayer);
 
         if (currentPlayer.wasTeleported()) {
             currentPlayer.setWasTeleported(false);
             System.out.println("\n\nYou were moved to this room due to another player's suggestion");
-            if (getBooleanInput("Skip your move and make a suggestion about this room? (y/n): ")) {
+            if (getBooleanInput("Skip your move and make a suggestion about this room?")) {
                 makeSuggestion(currentPlayer);
                 return;
             }
@@ -112,8 +115,6 @@ public class Game {
 
         // record player's starting cell (to check if it moves into a new room)
         Cell startingCell = currentPlayer.getCell();
-
-        board.printBoardAndNotebook(currentPlayer);
 
         System.out.println("\n");
         int numMoves = rollDice();
@@ -152,96 +153,45 @@ public class Game {
             board.moveItemToRoom(weaponGuess, roomGuess);
         }
 
-        boolean someoneRefuted = false;
         Iterator<Player> playerIterator = humanPlayers.values().iterator();
         while (playerIterator.next() != currentPlayer) {
         }     // start iterator at currentPlayer
 
-        // for clockwise players
-        for (int i = 0; i < humanPlayers.size() - 1 && !someoneRefuted; i++) {
+        // for each player clockwise of currentPlayer
+        for (int i = 0; i < humanPlayers.size() - 1; i++) {
             if (!playerIterator.hasNext())
                 playerIterator = humanPlayers.values().iterator();
 
             Player player = playerIterator.next();
-            Set<Card> cardsThePlayerHas = new HashSet<>(suggestionCards);
-            for (Card cardName : suggestionCards)
-                if (!player.holdsCard(cardName))
-                    cardsThePlayerHas.remove(cardName);
 
+            // figure out which (if any) of the suggested cards a player has
+            List<Card> cardsThePlayerHas = new ArrayList<>();
+            for (Card card : suggestionCards)
+                if (player.holdsCard(card))
+                    cardsThePlayerHas.add(card);
+
+            // if they have 1 of the suggested cards, they must show it to currentPlayer
             if (cardsThePlayerHas.size() == 1) {
-                someoneRefuted = true;
-                currentPlayer.addToNotepad(cardsThePlayerHas.iterator().next());
-//              add the information to our notebook
-            } else if (cardsThePlayerHas.size() > 1) {
-                someoneRefuted = true;
-//              ask them which card they want to show
-
-                // TODO: Using a Set for cardsThePlayerHas makes this weird. Either we take a string input of the name
-                //  and use that, or display the possible options with int values and take an int input, or get them to
-                //  use an int input based on the location it is in their displayed notebook. The first is a nuisance
-                //  for the player and a bit gross to implement, the second is the easiest for the player but the
-                //  grossest to implement with a set, and the third is kinda okay to implement but still not gr8 for the
-                //  player.     🤷 🤷 🤷 🤷 🤷
-                //  Need a second opinion on it, I've whipped up pseudocode for all, someone pick their poison.
-
-                //OPTION #1: STRING INPUT
-//                System.out.println(player.getCardName() + "Enter the card you want to offer: ");
-//                Scanner scanner = new Scanner(System.in);
-//                String givenCard = scanner.nextLine();      //double-check this pls, got it from google and didn't test
-//                Iterator<Card> cardIterator = cardsThePlayerHas.iterator();
-//                while (cardIterator.hasNext()) {
-//                    Card card = cardIterator.next();
-//                    if (card.getClass().getName().equalsIgnoreCase(givenCard)) {
-//                        currentPlayer.addToNotepad(card);
-//                        break;
-//                    } else if (!cardIterator.hasNext()) {
-//                        //something asking for another input bc they messed up their input. idk I'm tired.
-//                    }
-//                }
-
-                //OPTION #2: INT INPUT WITH GIVEN STUFF (I THINK THIS IS BEST NOW THAT I'VE WRITTEN IT - ELIAS)
-//                List<Card> cardsButWeCanAccessThemWithInts = new ArrayList<>(cardsThePlayerHas);
-//                //print out their options
-//                System.out.println("ALL THE CARDS YOU CAN CHOOSE FROM: ");
-//                for (int index = 0; index < cardsButWeCanAccessThemWithInts.size(); index++) {
-//                    System.out.println(index + ": " + cardsButWeCanAccessThemWithInts.get(index));
-//                }
-//
-//                //ask for their opinion ig, does their opinion really matter in the grand scheme of things???
-//                System.out.println(player.getCardName() + "Enter the card you want to offer: ");
-//                Scanner scanner = new Scanner(System.in);
-//                int givenCard = scanner.nextInt();      //double-check this pls, got it from google and didn't test
-//
-//                if (givenCard > cardsThePlayerHas.size()) {
-//                    //tell them they're bad and their input is wrong somehow, and give them another try like a baby
-//                } else {
-//                    //hooray they're right we can do it with one line of code
-//                    currentPlayer.addToNotepad(cardsButWeCanAccessThemWithInts.get(givenCard));
-//                }
-
-                //OPTION #3: INT INPUT BUT WE THROW THEM IN THE DEEP END AND GET THEM TO COUNT FOR THEMSELVES
-                //IT REALLY DO BE LIKE OPTION 2 BUT WE ASSUME THEY CAN COUNT IN ORDER
-                //also I just realised that I'm assuming cards is in order. Thus, its probably the worst option?
-
-//                //we care about their opinion ig
-//                System.out.println(player.getCardName() + "Enter the card you want to offer: ");
-//                Scanner scanner = new Scanner(System.in);
-//                int givenCard = scanner.nextInt();      //double-check this pls, got it from google and didn't test
-//
-//                if (givenCard > cards.size()) {
-//                    //tell them they're bad and their input is wrong somehow, and give them another try like a baby
-//                } else {
-//                    //hooray they're right we can do it with one line of code
-//                    currentPlayer.addToNotepad(cards.get(givenCard));
-//                }
-
-
-//              add the information to our notebook
+                currentPlayer.addToNotepad(cardsThePlayerHas.get(0));
+                System.out.println(player + " shows " + currentPlayer + " a card");
+                return;
             }
-            //otherwise we're skipping this player
+
+            // if they have 2 or more of the suggested cards, they can choose which one to show
+            if (cardsThePlayerHas.size() > 1) {
+
+                System.out.println(player + ", you have more than one of the suggested cards. Which one would you like to show to " + currentPlayer + "?");
+
+                for (int j = 0; j < cardsThePlayerHas.size(); j++)
+                    System.out.printf("[%d] %s%n", j, cardsThePlayerHas.get(j));
+                int cardIndex = getIntegerInput("Pick a card:", cardsThePlayerHas.size());
+
+                currentPlayer.addToNotepad(cardsThePlayerHas.get(cardIndex));
+                return;
+            }
         }
 
-        if (!someoneRefuted && getBooleanInput("No one could refute your suggestion. Make an accusation?"))
+        if (getBooleanInput("No one could refute your suggestion. Make an accusation?"))
             makeAccusation(currentPlayer);
     }
 
@@ -273,40 +223,45 @@ public class Game {
         Random random = new Random();
         int d1 = 1 + random.nextInt(5);
         int d2 = 1 + random.nextInt(5);
-        System.out.println("You rolled a " + d1 + " and a " + d2);
+        System.out.printf("You rolled %d and %d (%d spaces total)%n", d1, d2, d1+d2);
         return d1 + d2;
     }
 
     public boolean moveAPlayer(Player currentPlayer, int moveCount) {
-        //takes input for moves -- this looks so janky
-        System.out.println("Enter a sequence of moves: W, A, S, D, or 0 to not move: ");
-        Scanner reader = new Scanner(System.in);
-        String c = reader.next();
+//        inputScanner.nextLine();
+        System.out.print("Enter a sequence of moves (W,A,S,D, or ENTER for no move): ");
+        String c = inputScanner.nextLine().toUpperCase();
+        System.out.print("");
+
+        if (c.length() > moveCount) {
+            System.out.println("Sequence was too long, must be " + moveCount + " characters at most");
+            return false;
+        }
+
+        Cell currentCell = currentPlayer.getCell();
 
         List<Cell> allCellsTraversed = new ArrayList<>();
         // main move logic
         for (int i = 0; i < c.length(); i++) {
-            allCellsTraversed.add(currentPlayer.getCell());
+            allCellsTraversed.add(currentCell);
             Cell newCell;
             // catching ArrayIndexOutOfBoundExceptions to deal with edges of the board
             try {
-                if (c.charAt(i) == 'W' || c.charAt(i) == 'w') {
-                    newCell = board.getCell(currentPlayer.getCell().getRow() - 1, currentPlayer.getCell().getCol());
-                } else if (c.charAt(i) == 'A' || c.charAt(i) == 'a') {
-                    newCell = board.getCell(currentPlayer.getCell().getRow(), currentPlayer.getCell().getCol() - 1);
-                } else if (c.charAt(i) == 'S' || c.charAt(i) == 's') {
-                    newCell = board.getCell(currentPlayer.getCell().getRow() + 1, currentPlayer.getCell().getCol());
-                } else if (c.charAt(i) == 'D' || c.charAt(i) == 'd') {
-                    newCell = board.getCell(currentPlayer.getCell().getRow() - 1, currentPlayer.getCell().getCol() + 1);
-                } else if (c.charAt(i) == '0') {
-                    return true;  // don't need to continue checking if move is valid if there is no move 🤷
+                if (c.charAt(i) == 'W') {
+                    newCell = board.getCell(currentCell.getRow() - 1, currentCell.getCol());
+                } else if (c.charAt(i) == 'A') {
+                    newCell = board.getCell(currentCell.getRow(), currentCell.getCol() - 1);
+                } else if (c.charAt(i) == 'S') {
+                    newCell = board.getCell(currentCell.getRow() + 1, currentCell.getCol());
+                } else if (c.charAt(i) == 'D') {
+                    newCell = board.getCell(currentCell.getRow(), currentCell.getCol() + 1);
                 } else {
-                    System.out.println("Invalid string to move with. Can only use W, A, S, and D to move, or 0 for no-move.");
+                    System.out.println("Invalid string to move with. Can only use W, A, S, and D to move.");
                     return false;
                 }
 
-                if (isValidMove(currentPlayer.getCell(), newCell) && !allCellsTraversed.contains(newCell)) {
-                    currentPlayer.moveToCell(newCell);
+                if (isValidMove(currentCell, newCell) && !allCellsTraversed.contains(newCell)) {
+                    currentCell = newCell;
                 } else {
                     System.out.println("Invalid cell to move to.");
                     return false;
@@ -316,8 +271,10 @@ public class Game {
                 return false;
             }
         }
-        reader.close();
-        return true;  // if it gets here, we've successfully moved for a whole move.
+
+        // only when we get to here should we actually make the move
+        currentPlayer.moveToCell(currentCell);
+        return true;
     }
 
     public boolean isValidMove(Cell playerCell, Cell newCell) {
@@ -346,7 +303,7 @@ public class Game {
     public boolean getBooleanInput(String question) {
         while (true) {
             System.out.print(question + " (y/n): ");
-            String input = inputScanner.next();
+            String input = inputScanner.nextLine();
             System.out.print("");
             if (input.equalsIgnoreCase("Y")) {
                 return true;
@@ -365,13 +322,14 @@ public class Game {
 
             try {
                 int input = inputScanner.nextInt();
+                inputScanner.nextLine();
                 System.out.print("");
 
                 if (input < upperBound)
                     return input;
 
             } catch (Exception e) {
-                inputScanner.next();    // clear it out of the scanner
+                inputScanner.nextLine();    // clear it out of the scanner
             }
 
             System.out.println("Please enter a number from 0-" + (upperBound - 1));
