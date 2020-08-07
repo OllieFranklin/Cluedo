@@ -13,7 +13,7 @@ public class Item {
 
     //Item Associations
     private Cell cell;
-    private Card cardName;
+    private Card card;
     private String printString;
 
     private Board board;
@@ -24,23 +24,23 @@ public class Item {
 
     //This constructor doesn't seem necessary, commented it out - Elias
 
-    public Item(Cell cell, Card cardName, String printString) {
+    public Item(Cell cell, Card card, String printString) {
         this.cell = cell;
-        this.cardName = cardName;
+        this.card = card;
         this.printString = printString;
         this.cell.setContainsItem(true);
     }
 
-    public String toString() {
-        return printString;
-    }
+    public String toString() { return printString; }
+
+    public String getPrintString() { return printString; }
 
     public Cell getCell() {
         return cell;
     }
 
-    public Card getCardName() {
-        return cardName;
+    public Card getCard() {
+        return card;
     }
 
     public void moveToCell(Cell cell) {
@@ -55,7 +55,7 @@ public class Item {
      *
      * @return The CardName of the room
      */
-    public Card getRoomName() {
+    public Card.RoomCard getRoomName() {
         if (cell.getClass() == RoomCell.class) {
             return ((RoomCell) cell).getRoom();
         }

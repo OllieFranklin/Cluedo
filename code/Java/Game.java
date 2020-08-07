@@ -60,10 +60,7 @@ public class Game {
         inputScanner = new Scanner(System.in);
 
         board = new Board(new File("data/cell-data.txt"), new File("data/printed-board.txt"));
-        cards = new ArrayList<>();
-        cards.addAll(Arrays.asList(PlayerCard.values()));
-        cards.addAll(Arrays.asList(PlayerCard.values()));
-        cards.addAll(Arrays.asList(PlayerCard.values()));
+        cards = Arrays.asList(Card.values());
 
         System.out.println("Welcome to Cluedo!");
         initHumanPlayers();
@@ -98,10 +95,10 @@ public class Game {
 
     public void playATurn(Player currentPlayer) {
 
-
         if (currentPlayer.isOut())
             return;
 
+        System.out.println("\n\n--------" + currentPlayer.getCard().toString().toUpperCase() + "'S TURN--------");
         board.printBoardAndNotebook(currentPlayer);
 
         if (currentPlayer.wasTeleported()) {
@@ -113,8 +110,8 @@ public class Game {
             }
         }
 
-        // record player's starting cell (to check if it moves into a new room)
-        Cell startingCell = currentPlayer.getCell();
+        // record player's room (null if they're in a hallway)
+        RoomCard roomBeforeMove = currentPlayer.getRoomName();
 
         System.out.println("\n");
         int numMoves = rollDice();
@@ -124,11 +121,13 @@ public class Game {
 
         board.printBoardAndNotebook(currentPlayer);
 
-        if (currentPlayer.getCell() != startingCell)
+        RoomCard roomAfterMove = currentPlayer.getRoomName();
+
+        if (roomAfterMove != null && roomAfterMove != roomBeforeMove)
             makeSuggestion(currentPlayer);
     }
 
-    // TODO: this method
+
     public void makeSuggestion(Player currentPlayer) {
 
         // sanity check, although this shouldn't happen
@@ -228,7 +227,6 @@ public class Game {
     }
 
     public boolean moveAPlayer(Player currentPlayer, int moveCount) {
-//        inputScanner.nextLine();
         System.out.print("Enter a sequence of moves (W,A,S,D, or ENTER for no move): ");
         String c = inputScanner.nextLine().toUpperCase();
         System.out.print("");
@@ -624,15 +622,5 @@ public class Game {
 
     public static void main(String[] args) {
         new Game();
-    }
-
-    public void removeCard(Card card) {
-        // TODO Auto-generated method stub
-
-    }
-
-    public void addCard(Card card) {
-        // TODO Auto-generated method stub
-
     }
 }

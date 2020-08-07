@@ -16,8 +16,8 @@ public class Player extends Item {
 
     //Player Associations
 
-    private List<Card> hand;
-    private List<Card> notepad;
+    private Set<Card> hand;
+    private Set<Card> notepad;
 
     private boolean isOut;          // player is out of the game if they've made an incorrect accusation
     private boolean wasTeleported;  // player was teleported into their current room < 1 turn ago
@@ -29,37 +29,27 @@ public class Player extends Item {
     public Player(Cell cell, PlayerCard cardName, String printString) {
         super(cell, cardName, printString);
 
-        hand = new ArrayList<>();
-        notepad = new ArrayList<>();
-
+        hand = new HashSet<>();
+        notepad = new HashSet<>();
     }
 
     //------------------------
     // INTERFACE
     //------------------------
 
-    // bruh I tried using the pre-written add card method and it's awful - Ollie
     public void dealCard(Card card) {
-
         hand.add(card);
         notepad.add(card);
-
     }
 
     public boolean holdsCard(Card cardName) {
         return hand.contains(cardName);
     }
 
-    public boolean knowAboutCard(Card cardName) {
-        return notepad.contains(cardName);
-    }
+    public boolean knowsAboutCard(Card cardName) { return notepad.contains(cardName); }
 
     public void addToNotepad(Card card) {
         notepad.add(card);
-    }
-
-    public String toString() {
-        return super.toString();
     }
 
     public boolean isOut() {
@@ -77,6 +67,8 @@ public class Player extends Item {
     public void setWasTeleported(boolean wasTeleported) {
         this.wasTeleported = wasTeleported;
     }
+
+    public String toString() { return super.getCard().toString(); }
 
     //Prevented compilation - Elias
 

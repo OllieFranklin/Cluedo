@@ -1,4 +1,10 @@
 package Java;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
 public interface Card {
 
     enum PlayerCard implements Card {
@@ -13,6 +19,7 @@ public interface Card {
         PlayerCard(String name) {
             this.name = name;
         }
+        public String toString() {return this.name; }
     }
 
     enum WeaponCard implements Card {
@@ -28,6 +35,7 @@ public interface Card {
         WeaponCard(String name) {
             this.name = name;
         }
+        public String toString() {return this.name; }
     }
 
     enum RoomCard implements Card {
@@ -46,5 +54,12 @@ public interface Card {
         RoomCard(String name) {
             this.name = name;
         }
+        public String toString() {return this.name; }
+    }
+
+    public static Card[] values() {
+        return Stream.of(PlayerCard.values(), WeaponCard.values(), RoomCard.values())
+                .flatMap(Stream::of)
+                .toArray(Card[]::new);
     }
 }

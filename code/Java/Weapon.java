@@ -22,9 +22,12 @@ public class Weapon extends Item {
         super(cell, cardName, printString);
     }
 
-    public String toString() {
-        return super.toString();
-    }
+    public String toString() { return super.getCard().toString(); }
+
+    /**
+     *  Weapons are drawn as lowercase on the board
+     */
+    public String getPrintString() { return super.getPrintString().toLowerCase(); }
 
     //------------------------
     // INTERFACE

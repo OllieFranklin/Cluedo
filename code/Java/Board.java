@@ -76,6 +76,8 @@ public class Board {
         // places weapons randomly in rooms
         // TODO: THIS ALWAYS PLACES WEAPONS IN TOP-LEFT OF ROOM, COULD CHANGE TO BE MORE RANDOM?
         //  WEAPON PRINTSTRING CURRENTLY FIRST 2 LETTERS FOR EASE, COULD HAVE BETTER PRINTSTRINGS
+
+        // TODO: SHOULD PROBABLY USE THE METHOD WE CREATED FOR THIS (moveItemToRoom) BUT I CAN'T BE BOTHERED RN
         for (RoomCard room : shuffledRooms) {
             if (unusedWeapons.isEmpty()) {
                 break;
@@ -174,28 +176,21 @@ public class Board {
         // replace player/weapon cells with their Strings
         try {
             for (Item w : items.values())
-                replaceCell(w.getCell().getRow(), w.getCell().getCol(), w.toString(), output);
+                replaceCell(w.getCell().getRow(), w.getCell().getCol(), w.getPrintString(), output);
         } catch (Exception e) {
             e.printStackTrace();
             return;
         }
 
-        // TODO: Look at this. It's an ugly line
-        //  I wanted this, but couldn't get it to work even with weird casting:
-        //  new ArrayList<Card>(Arrays.asList(PlayerCard.values())).addAll(Arrays.asList(WeaponCard.values()).addAll(Arrays.asList(RoomCard.values())))
-        //  so I settled with a 2-line solution. Magic it better please
-        List<Card> cardNames = new ArrayList<Card>(Arrays.asList(PlayerCard.values()));
-        cardNames.addAll(Arrays.asList(WeaponCard.values()));
-        cardNames.addAll(Arrays.asList(RoomCard.values()));
+        // draw X or ? on the player's notebook
+        Card[] cardNames = Card.values();
         int offset = 2;
-        for (int i = 0; i < cardNames.size(); i++) {
-            output[i + offset].append(player.knowAboutCard(cardNames.get(i)) ? "X" : "?");
+        for (int i = 0; i < cardNames.length; i++) {
+            output[i + offset].append(player.knowsAboutCard(cardNames[i]) ? "X" : "?");
 
-            if (i != cardNames.size() - 1 && cardNames.get(i).getClass() != cardNames.get(i+1).getClass())
+            if (i != cardNames.length - 1 && cardNames[i].getClass() != cardNames[i+1].getClass())
                 offset++;
         }
-
-        System.out.println("\n\n" + "PLAYER: " + player.getCardName().toString().toUpperCase());
 
         for (StringBuilder sb : output)
             System.out.println(sb);
@@ -221,9 +216,6 @@ public class Board {
     }
 
     public boolean itemInRoom(Card itemName, RoomCard roomName) {
-        // TODO: Work out a way of checking that itemName aint a RoomCard without null return, or ditch the check
-
-        // I think that does the above? returning false seems good, right? - Ollie
         return itemName.getClass() == RoomCard.class && items.get(itemName).getRoomName() == roomName;
     }
 
