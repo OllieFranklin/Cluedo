@@ -18,7 +18,7 @@ public class HallCell extends Cell {
     // CONSTRUCTOR
     //------------------------
 
-    public HallCell(Board aBoard, int row, int col, boolean aIsEntrance) {
+    public HallCell(int row, int col, boolean aIsEntrance) {
         super(row, col);
         isEntrance = aIsEntrance;
     }

@@ -3,31 +3,14 @@ package Java;
 /*This code was generated using the UMPLE 1.30.0.5074.a43557235 modeling language!*/
 
 
-// line 35 "model.ump"
-// line 108 "model.ump"
 public class EmptyCell extends Cell {
-
-    //------------------------
-    // MEMBER VARIABLES
-    //------------------------
 
     //------------------------
     // CONSTRUCTOR
     //------------------------
 
-    public EmptyCell(Board aBoard, int row, int col) {
+    public EmptyCell(int row, int col) {
         super(row, col);
     }
-
-    //------------------------
-    // INTERFACE
-    //------------------------
-
-    //Prevented compilation, don't know if its necessary - Elias
-
-//  public void delete()
-//  {
-//    super.delete();
-//  }
 
 }

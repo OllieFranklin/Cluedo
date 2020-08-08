@@ -11,10 +11,6 @@ import java.util.HashSet;
 public class Weapon extends Item {
 
     //------------------------
-    // MEMBER VARIABLES
-    //------------------------
-
-    //------------------------
     // CONSTRUCTOR
     //------------------------
 
@@ -22,22 +18,14 @@ public class Weapon extends Item {
         super(cell, cardName, printString);
     }
 
+    //------------------------
+    // INTERFACE
+    //------------------------
+
     public String toString() { return super.getCard().toString(); }
 
     /**
      *  Weapons are drawn as lowercase on the board
      */
     public String getPrintString() { return super.getPrintString().toLowerCase(); }
-
-    //------------------------
-    // INTERFACE
-    //------------------------
-
-    //Prevented compilation - Elias
-
-//  public void delete()
-//  {
-//    super.delete();
-//  }
-
 }

@@ -4,15 +4,7 @@ package Java;
 
 import Java.Card.RoomCard;
 
-// line 16 "model.ump"
-// line 85 "model.ump"
 public class RoomCell extends Cell {
-
-    //------------------------
-    // ENUMERATIONS
-    //------------------------
-
-//  public enum RoomName { KITCHEN, BALLROOM, CONSERVATORY, DINING_ROOM, BILLIARD_ROOM, LIBRARY, LOUNGE, HALL, STUDY }
 
     //------------------------
     // MEMBER VARIABLES
@@ -26,7 +18,7 @@ public class RoomCell extends Cell {
     // CONSTRUCTOR
     //------------------------
 
-    public RoomCell(Board aBoard, int row, int col, boolean aIsDoor, RoomCard aRoom) {
+    public RoomCell(int row, int col, boolean aIsDoor, RoomCard aRoom) {
         super(row, col);
         isDoor = aIsDoor;
         room = aRoom;
@@ -57,18 +49,6 @@ public class RoomCell extends Cell {
     public RoomCard getRoom() {
         return room;
     }
-
-    /* Code from template attribute_IsBoolean */
-
-    // bruh it auto-generated isIsDoor and getIsDoor and they did the same thing. wtf.
-
-    //Prevented compilation - Elias
-
-//  public void delete()
-//  {
-//    super.delete();
-//  }
-
 
     public String toString() {
         return super.toString() + "[" +
