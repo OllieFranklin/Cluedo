@@ -1,10 +1,14 @@
+//Unable to update umple code due to error at [31,1]
 class Board {
-  1--* Cell;
-  1--* Item;
+  1->* Cell;
+  1->* Item;
 
 }
 
 class Cell {  
+  Integer row;
+  Integer col;
+  Boolean containsItem;
 }
 
 class HallCell {
@@ -14,19 +18,22 @@ isA Cell;
 
 class RoomCell {
   Boolean isDoor;
-  RoomName room;
+  RoomCard room;
 isA Cell;
   }
 
 class Item {
-	* -> 1 Cell;
+	Card card;
+* -> 1 Cell cell;
 }
 
 class Player {
+  Boolean outOfGame;
+Boolean wasTeleported;
+1 -> * Card hand;
+  1 -> * Card notepad;
 	isA Item;
-    1 hand -- * Card;
-  1 notebook-- * Card re;
-}
+    }
 
 
 class Weapon {
@@ -39,18 +46,18 @@ class Weapon {
 class Card
 {
 
-  CardType type;
-  name;
+      enum card
 
 }
 
 class Game
 {
-      1 -- 1 Board;
-    1 -- * Card;
-    
-     * -- * Player;
-private Card[] envelope = new Card[3];
+      Boolean gameOver;
+PlayerCard murderer;
+WeaponCard murderWeapon;
+RoomCard crimeScene;
+1 -> 1 Board;
+      1 -> * Player humanPlayers;
 
   }
 
@@ -62,64 +69,105 @@ enum RoomName {KITCHEN, BALLROOM, CONSERVATORY }
 namespace -;
 
 
+class PlayerCard
+{
+     
+  isA Card;
+}
+
+class WeaponCard
+{
+   
+  isA Card;
+}
+
+class RoomCard
+{
+   
+  isA Card;
+}
+
 class Board
 {
-  position 417 148 109 41;
+  position 456 163 109 41;
   position.association Board__Cell 0,37 110,0;
-  position.association Board__Item 110,41 40,0;
+  position.association Board__Item 110,61 40,0;
     position.association Board__Game 61,0 47,41;
 }
 
 class Cell
 {
-  position 237 265 109 41;
+  position 237 265 109 95;
   position.association Cell__Item 110,19 0,30;
 }
 
 class HallCell
 {
-  position 42 422 167 58;
+  position 76 427 167 58;
 }
 
 class RoomCell
 {
-  position 220 419 142 75;
+  position 253 427 142 75;
   }
 
 class Item
 {
-  position 638 280 109 41;
+  position 616 279 109 78;
   position.association Cell__Item 0,18 110,31;
   position.association Item__RoomCell 0,32 118,9;
+  position.association Cell:cell__Item 0,26 173,41;
 }
 
 class Player
 {
-  position 754 425 109 41;
+  position 763 321 183 95;
   position.association Card:nonMuderingThings__Player 82,0 24,75;
+  position.association Card:notepad__Player 58,75 12,0;
+  position.association Card:hand__Player 152,75 107,0;
 }
 
 class Weapon
 {
-  position 563 423 109 41;
+  position 523 360 109 41;
 }
 
 class EmptyCell
 {
-  position 368 419 109 41;
+  position 407 428 109 41;
 }
 
 class Card
 {
-  position 841 192 113 75;
-  position.association Card__Player 38,41 91,0;
+  position 809 457 113 41;
   position.association Card__Game 0,43 110,39;
+  position.association Card__Player 39,0 110,49;
 }
 
 class Game
 {
-  position 627 21 109 41;
-    position.association Board__Game 47,41 61,0;
-  position.association Card__Game 0,41 0,6;
-    position.association Game__Player 63,41 69,0;
+  position 398 2 215 109;
+    position.association Board__Game 113,109 56,0;
+    position.association Card__Game 101,95 37,0;
+  position.association Game__Player 50,129 30,0;
+    position.association Game__Player:humanPlayers 146,109 89,0;
 }//$?[End_of_model]$?
+
+namespace -;
+
+
+class PlayerCard
+{
+  position 670 593 109 41;
+  position.association PlayerCard__NewClass:roleName 65,0 65,0;
+}
+
+class WeaponCard
+{
+  position 811 594 109 41;
+}
+
+class RoomCard
+{
+  position 954 594 109 41;
+}
