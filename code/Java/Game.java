@@ -62,6 +62,12 @@ public class Game {
     // INTERFACE
     //------------------------
 
+    /**
+     * Asks the user which characters are being played by human players.
+     *
+     * Additionally checks that this number of human players is valid (3 to 6), not allowing the game to be played until
+     * a valid number of human players have been selected.
+     */
     public void initHumanPlayers() {
         while (true) {
             humanPlayers = new LinkedHashMap<>();
@@ -109,6 +115,12 @@ public class Game {
         }
     }
 
+    /**
+     * Plays through an entire player's turn.
+     * Will immediately stop executing if the given player is out of the game.
+     *
+     * @param currentPlayer contains the player who's turn is being played through.
+     */
     public void playATurn(Player currentPlayer) {
 
         if (currentPlayer.isOut())
@@ -143,7 +155,16 @@ public class Game {
             makeSuggestion(currentPlayer);
     }
 
-
+    /**
+     * Allows a given player to make a suggestion.
+     *
+     * This involves the player being asked which player they suspect, which weapon they suspect was used in the murder,
+     * and puts that together with their current room as a suggestion. This is then given to other players to refute.
+     *
+     * If no one was able to refute the suggestion, it gives the player the option to make an accusation.
+     *
+     * @param currentPlayer contains the player making the suggestion.
+     */
     public void makeSuggestion(Player currentPlayer) {
 
         // sanity check, although this shouldn't happen
@@ -172,36 +193,14 @@ public class Game {
         while (playerIterator.next() != currentPlayer) {
         }     // start iterator at currentPlayer
 
-        // for each player clockwise of currentPlayer
+        // for each player clockwise of currentPlayer, check if they can refute the suggestion
         for (int i = 0; i < humanPlayers.size() - 1; i++) {
             if (!playerIterator.hasNext())
                 playerIterator = humanPlayers.values().iterator();
 
             Player player = playerIterator.next();
 
-            // figure out which (if any) of the suggested cards a player has
-            List<Card> cardsThePlayerHas = new ArrayList<>();
-            for (Card card : suggestionCards)
-                if (player.holdsCard(card))
-                    cardsThePlayerHas.add(card);
-
-            // if they have 1 of the suggested cards, they must show it to currentPlayer
-            if (cardsThePlayerHas.size() == 1) {
-                currentPlayer.addToNotepad(cardsThePlayerHas.get(0));
-                System.out.println(player + " shows " + currentPlayer + " a card");
-                return;
-            }
-
-            // if they have 2 or more of the suggested cards, they can choose which one to show
-            if (cardsThePlayerHas.size() > 1) {
-
-                System.out.println(player + ", you have more than one of the suggested cards. Which one would you like to show to " + currentPlayer + "?");
-
-                for (int j = 0; j < cardsThePlayerHas.size(); j++)
-                    System.out.printf("[%d] %s%n", j, cardsThePlayerHas.get(j));
-                int cardIndex = getIntegerInput("Pick a card:", cardsThePlayerHas.size());
-
-                currentPlayer.addToNotepad(cardsThePlayerHas.get(cardIndex));
+            if(refuteSuggestion(suggestionCards, player, currentPlayer)) {
                 return;
             }
         }
@@ -210,6 +209,52 @@ public class Game {
             makeAccusation(currentPlayer);
     }
 
+    /**
+     *
+     * @param suggestionCards contains the suggestion made.
+     * @param player contains the player refuting the suggestion.
+     * @param currentPlayer contains the player who made the suggestion.
+     * @return whether the player was able to refute the suggestion.
+     */
+    public boolean refuteSuggestion(Set<Card> suggestionCards, Player player, Player currentPlayer) {
+        // figure out which (if any) of the suggested cards a player has
+        List<Card> cardsThePlayerHas = new ArrayList<>();
+        for (Card card : suggestionCards)
+            if (player.holdsCard(card))
+                cardsThePlayerHas.add(card);
+
+        // if they have 1 of the suggested cards, they must show it to currentPlayer
+        if (cardsThePlayerHas.size() == 1) {
+            currentPlayer.addToNotepad(cardsThePlayerHas.get(0));
+            System.out.println(player + " shows " + currentPlayer + " a card");
+            return true;
+        }
+
+        // if they have 2 or more of the suggested cards, they can choose which one to show
+        if (cardsThePlayerHas.size() > 1) {
+
+            System.out.println(player + ", you have more than one of the suggested cards. Which one would you like to show to " + currentPlayer + "?");
+
+            for (int j = 0; j < cardsThePlayerHas.size(); j++)
+                System.out.printf("[%d] %s%n", j, cardsThePlayerHas.get(j));
+            int cardIndex = getIntegerInput("Pick a card:", cardsThePlayerHas.size());
+
+            currentPlayer.addToNotepad(cardsThePlayerHas.get(cardIndex));
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Allows a given player to make an accusation.
+     *
+     * This involves the player being asked for a murder suspect, murder weapon, and murder location. These are then
+     * compared to the murder circumstances. If all three match, the player has successfully won the game. If any of the
+     * three don't match, the player's accusation is false, and they can no longer play for the rest of the game.
+     *
+     * @param currentPlayer contains the player making the accusation.
+     */
     public void makeAccusation(Player currentPlayer) {
         System.out.println("Make an Accusation: ");
 
@@ -226,6 +271,16 @@ public class Game {
         }
     }
 
+    /**
+     * Helper method that simplifies option selection for makeSuggestion and makeAccusation.
+     *
+     * Presents all possible options the user may pick from with corresponding integers, and returns the card that
+     * matches the integer input of the user.
+     *
+     * @param question contains the question to be printed.
+     * @param cards contains an array of the card options the user can select from.
+     * @return the item in cards that matches the user's input.
+     */
     public Card pickOption(String question, Card[] cards) {
 
         for (int i = 0; i < cards.length; i++)
@@ -234,6 +289,11 @@ public class Game {
         return cards[getIntegerInput(question, cards.length)];
     }
 
+    /**
+     * Makes a dice roll, and prints it in a way representative of two real dice being rolled.
+     *
+     * @return the total of the two dice rolls
+     */
     public static int rollDice() {
         Random random = new Random();
         int d1 = 1 + random.nextInt(6);
@@ -242,6 +302,17 @@ public class Game {
         return d1 + d2;
     }
 
+    /**
+     * Prompts the user to input a string of inputs to move their character by.
+     *
+     * Then checks that the entire string of inputs creates a valid move path. Will return false at any point that the
+     * move path is found invalid. Will return true if the input is valid, and will move the player on the board
+     * accordingly.
+     *
+     * @param currentPlayer contains the player moving
+     * @param moveCount contains the number of
+     * @return whether the entire move sequence was valid (true/false)
+     */
     public boolean moveAPlayer(Player currentPlayer, int moveCount) {
         System.out.print("Enter a sequence of moves (W,A,S,D, or ENTER for no move): ");
         String c = inputScanner.nextLine().toUpperCase();
@@ -291,16 +362,32 @@ public class Game {
         return true;
     }
 
+    /**
+     * Helper method for moveAPlayer method.
+     *
+     * Will check if moving from the player's current cell (playerCell) to the suggest new cell (newCell) is valid. This
+     * involves checking that both cells are of the same type (both RoomCells or both HallCells) unless moving from a
+     * DoorCell to an EntranceCell or vice-versa.
+     *
+     * Also checks that the newCell suggested isn't currently occupied by another item on the board.
+     *
+     * @param playerCell contains the current player's cell.
+     * @param newCell contains the new cell the player wants to move to.
+     * @return whether this single-cell move is valid.
+     */
     public boolean isValidMove(Cell playerCell, Cell newCell) {
-        // helper method to get if a cell is valid or not
+
+        //can never move into an empty cell
         if (newCell.getClass() == EmptyCell.class) {
             return false;
         }
 
+        //can never move into a cell that contains another item
         if (newCell.doesContainItem()) {
             return false;
         }
 
+        //can never move from a HallCell into a RoomCell, unless from DoorCell to EntranceCell or vice-versa
         if (playerCell.getClass() == HallCell.class) {
             if (newCell.getClass() == HallCell.class) {
                 return true;

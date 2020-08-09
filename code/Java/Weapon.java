@@ -25,7 +25,7 @@ public class Weapon extends Item {
     public String toString() { return super.getCard().toString(); }
 
     /**
-     *  Weapons are drawn as lowercase on the board
+     *  Returns a lowercase string, to represent the weapon on the board with.
      */
     public String getPrintString() { return super.getPrintString().toLowerCase(); }
 }

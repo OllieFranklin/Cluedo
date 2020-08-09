@@ -4,6 +4,9 @@ import java.util.stream.Stream;
 
 public interface Card {
 
+    /**
+     * All the possible PlayerCard values
+     */
     enum PlayerCard implements Card {
         COLONEL_MUSTARD("Colonel Mustard"),
         PROFESSOR_PLUM("Professor Plum"),
@@ -19,6 +22,9 @@ public interface Card {
         public String toString() {return this.name; }
     }
 
+    /**
+     * All the possible WeaponCard values
+     */
     enum WeaponCard implements Card {
 
         DAGGER("Dagger"),
@@ -35,6 +41,9 @@ public interface Card {
         public String toString() {return this.name; }
     }
 
+    /**
+     * All the possible RoomCard values
+     */
     enum RoomCard implements Card {
 
         KITCHEN("Kitchen"),
@@ -54,6 +63,9 @@ public interface Card {
         public String toString() {return this.name; }
     }
 
+    /**
+     * @return an array of all of the Card values of all types (all PlayerCards, RoomCards, and WeaponCards).
+     */
     public static Card[] values() {
         return Stream.of(PlayerCard.values(), WeaponCard.values(), RoomCard.values())
                 .flatMap(Stream::of)

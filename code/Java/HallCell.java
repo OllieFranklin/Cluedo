@@ -27,6 +27,12 @@ public class HallCell extends Cell {
     // INTERFACE
     //------------------------
 
+    /**
+     * Sets this HallCell as an entrance. For board reading purposes.
+     *
+     * @param aIsEntrance contains what to set the isEntrance field to
+     * @return whether this was set successfully.
+     */
     public boolean setIsEntrance(boolean aIsEntrance) {
         boolean wasSet = false;
         isEntrance = aIsEntrance;
@@ -34,18 +40,12 @@ public class HallCell extends Cell {
         return wasSet;
     }
 
+    /**
+     * @return whether the board is an entrance cell (true/false).
+     */
     public boolean getIsEntrance() {
         return isEntrance;
     }
-    /* Code from template attribute_IsBoolean */
-
-    //Prevented compilation - Elias
-
-//  public void delete()
-//  {
-//    super.delete();
-//  }
-
 
     public String toString() {
         return super.toString() + "[" +

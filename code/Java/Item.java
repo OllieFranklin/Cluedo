@@ -40,6 +40,12 @@ public class Item {
         return card;
     }
 
+    /**
+     * Moves the item from its current cell to a new given cell.
+     * Additionally, updates the cells to correctly know whether they contain an item.
+     *
+     * @param cell contains the cell to move this item to
+     */
     public void moveToCell(Cell cell) {
         this.cell.setContainsItem(false);
         this.cell = cell;
@@ -47,10 +53,11 @@ public class Item {
     }
 
     /**
-     * Get the CardName of the room the item is currently in
-     * If the item is not in room (i.e. it is in a hall) return null
+     * Gets the card associated to the room this item is in.
+     * This converts the item's cell information into a RoomCard, to be used elsewhere. If the cell of the item is not
+     * a RoomCell, it returns null.
      *
-     * @return The CardName of the room
+     * @return The CardName of the room (or null for a non-room cell, e.g. hall)
      */
     public Card.RoomCard getRoomName() {
         if (cell.getClass() == RoomCell.class) {

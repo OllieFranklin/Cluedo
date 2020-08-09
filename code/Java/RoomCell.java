@@ -28,6 +28,12 @@ public class RoomCell extends Cell {
     // INTERFACE
     //------------------------
 
+    /**
+     * Sets the room as a door. For board reading purposes.
+     *
+     * @param aIsDoor contains the boolean to set isDoor to.
+     * @return whether this was set successfully.
+     */
     public boolean setIsDoor(boolean aIsDoor) {
         boolean wasSet = false;
         isDoor = aIsDoor;
@@ -35,6 +41,12 @@ public class RoomCell extends Cell {
         return wasSet;
     }
 
+    /**
+     * Sets the room to be associated with this RoomCell. For board reading purposes.
+     *
+     * @param aRoom contains the room to be set to.
+     * @return whether the room was set successfully.
+     */
     public boolean setRoom(RoomCard aRoom) {
         boolean wasSet = false;
         room = aRoom;
@@ -42,10 +54,16 @@ public class RoomCell extends Cell {
         return wasSet;
     }
 
+    /**
+     * @return whether or not the RoomCell is a door (true or false)
+     */
     public boolean getIsDoor() {
         return isDoor;
     }
 
+    /**
+     * @return the RoomCard associated with this RoomCell
+     */
     public RoomCard getRoom() {
         return room;
     }

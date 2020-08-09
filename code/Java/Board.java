@@ -60,6 +60,12 @@ public class Board {
     // INTERFACE
     //------------------------
 
+    /**
+     * Moves an item into a random cell in a given room.
+     *
+     * @param itemName contains the item card of the item we want to move into a room.
+     * @param roomName contains the RoomCard of the room we want the item moved to.
+     */
     public void moveItemToRoom(Card itemName, RoomCard roomName) {
 
         if (itemName.getClass() == RoomCard.class)
@@ -76,6 +82,13 @@ public class Board {
         }
     }
 
+    /**
+     * Reads two files and initialises a 2D Array of Cells based on the files.
+     * This 2D Array of Cells becomes the "Board" the players move on.
+     *
+     * @param dataFile contains a text file of the board with more information for forming rooms.
+     * @param printedBoardFile contains a text file of the board as printed to the players, for creating doors/entrances
+     */
     public void initCells(File dataFile, File printedBoardFile) {
         try {
             cellsPerRoom = new HashMap<>();
@@ -173,6 +186,13 @@ public class Board {
         text[row].replace(col * 2, col * 2 + replacement.length(), replacement);
     }
 
+    /**
+     * Gets a cell from a given row and column
+     *
+     * @param row the row to get the cell from.
+     * @param col the column to get the cell from.
+     * @return the cell at (row, col).
+     */
     public Cell getCell(int row, int col) {
         return cells[row][col];
     }
@@ -181,6 +201,12 @@ public class Board {
         return itemName.getClass() == RoomCard.class && items.get(itemName).getRoomName() == roomName;
     }
 
+    /**
+     * Gets a Player object from their PlayerCard.
+     *
+     * @param cardName the PlayerCard of the Player we want.
+     * @return the Player associated to that PlayerCard.
+     */
     public Player getPlayer(PlayerCard cardName) {
         return (Player)items.get(cardName);
     }
